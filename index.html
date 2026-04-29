@@ -1986,18 +1986,19 @@ setInterval(updateCountdowns, 1000);
 
 // Auto-update map pins based on member cards
 (function() {
-  var cards = document.querySelectorAll('.member-card[data-state]');
+  var goldCards = document.querySelectorAll('#members .member-card[data-state]');
+  var silverCards = document.querySelectorAll('#challengers .member-card[data-state]');
+  var amberCards = document.querySelectorAll('#alumni .member-card[data-state]');
   var goldCounts = {};
   var silverCounts = {};
-  cards.forEach(function(c) {
+  goldCards.forEach(function(c) {
     var s = c.dataset.state;
-    if (s && s !== 'ALL') {
-      if (c.classList.contains('challenger')) {
-        silverCounts[s] = (silverCounts[s] || 0) + 1;
-      } else {
-        goldCounts[s] = (goldCounts[s] || 0) + 1;
-      }
-    }
+    if (s) goldCounts[s] = (goldCounts[s] || 0) + 1;
+  });
+  silverCards.forEach(function(c) {
+    var s = c.dataset.state;
+    if (s) silverCounts[s] = (silverCounts[s] || 0) + 1;
+  });
   });
   document.querySelectorAll('.map-pin').forEach(function(pin) {
     var onclick = pin.getAttribute('onclick') || '';
