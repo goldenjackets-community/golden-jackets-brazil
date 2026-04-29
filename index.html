@@ -1238,6 +1238,40 @@
   <section id="alumni" class="members" style="text-align:center;">
     <h2 style="font-size:1.6em;color:#E8C84A;margin-bottom:8px;">🎖️ Alumni</h2>
     <p style="color:var(--text-muted);font-size:0.9em;margin-bottom:8px;">Former Golden Jacket holders — renew your expired certifications to reclaim your Golden Jacket status</p>
+    <div class="filter-bar">
+      <label>Filter by State:</label>
+      <select id="alumniStateFilter" onchange="filterAlumni()">
+        <option value="All">All</option>
+        <option value="AC">Acre</option>
+        <option value="AL">Alagoas</option>
+        <option value="AP">Amapá</option>
+        <option value="AM">Amazonas</option>
+        <option value="BA">Bahia</option>
+        <option value="CE">Ceará</option>
+        <option value="DF">Distrito Federal</option>
+        <option value="ES">Espírito Santo</option>
+        <option value="GO">Goiás</option>
+        <option value="MA">Maranhão</option>
+        <option value="MT">Mato Grosso</option>
+        <option value="MS">Mato Grosso do Sul</option>
+        <option value="MG">Minas Gerais</option>
+        <option value="PA">Pará</option>
+        <option value="PB">Paraíba</option>
+        <option value="PR">Paraná</option>
+        <option value="PE">Pernambuco</option>
+        <option value="PI">Piauí</option>
+        <option value="RJ">Rio de Janeiro</option>
+        <option value="RN">Rio Grande do Norte</option>
+        <option value="RS">Rio Grande do Sul</option>
+        <option value="RO">Rondônia</option>
+        <option value="RR">Roraima</option>
+        <option value="SC">Santa Catarina</option>
+        <option value="SP">São Paulo</option>
+        <option value="SE">Sergipe</option>
+        <option value="TO">Tocantins</option>
+      </select>
+      <span class="total" id="alumniTotal">Total: 1 alumni</span>
+    </div>
     <div class="members-grid">
 
       <!-- Alumni cards go here -->
@@ -1699,6 +1733,21 @@
           card.style.display='none';
         }
       });
+    }
+
+    function filterAlumni(){
+      var state=document.getElementById('alumniStateFilter').value;
+      var cards=document.querySelectorAll('#alumni .member-card');
+      var visible=0;
+      cards.forEach(function(card){
+        if(state==='All'||!card.dataset.state||card.dataset.state===state){
+          card.style.display='';
+          visible++;
+        }else{
+          card.style.display='none';
+        }
+      });
+      document.getElementById('alumniTotal').textContent='Total: '+visible+' alumni';
     }
 
     // Animated counter
