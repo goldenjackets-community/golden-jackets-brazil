@@ -168,6 +168,15 @@
           <a href="#">Coming soon →</a>
         </div>
 
+        <div class="card" id="mfaSetupCard" style="display:none;">
+          <span class="badge">Security</span>
+          <h3>🔐 MFA Setup</h3>
+          <p>Enable two-factor authentication for your admin account.</p>
+          <br>
+          <button onclick="setupMfa()" style="padding:8px 16px;background:linear-gradient(135deg,#FFD700,#B8860B);border:none;border-radius:8px;color:#151528;font-weight:700;cursor:pointer;">Setup MFA</button>
+          <div id="mfaSetupOutput" style="margin-top:12px;"></div>
+        </div>
+
         
 
     </div>
@@ -260,14 +269,8 @@ function showContent(userEmail) {
     document.getElementById('adminBtnWrap').style.display = 'inline';
     var adminPanel = document.getElementById('sec-admin');
     if (adminPanel) adminPanel.style.display = 'block';
-    // Show MFA setup if not already in DOM
-    if (!document.getElementById('mfaSetupCard')) {
-      var mfaCard = document.createElement('div');
-      mfaCard.id = 'mfaSetupCard';
-      mfaCard.className = 'card';
-      mfaCard.innerHTML = '<span class="badge">Security</span><h3>🔐 MFA Setup</h3><p>Enable two-factor authentication for your admin account.</p><br><button onclick="setupMfa()" style="padding:8px 16px;background:linear-gradient(135deg,#FFD700,#B8860B);border:none;border-radius:8px;color:#151528;font-weight:700;cursor:pointer;">Setup MFA</button><div id="mfaSetupOutput" style="margin-top:12px;"></div>';
-      document.getElementById('content').appendChild(mfaCard);
-    }
+    // Show MFA setup card for admin
+    document.getElementById('mfaSetupCard').style.display = 'block';
   }
 }
 
