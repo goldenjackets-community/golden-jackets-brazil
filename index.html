@@ -1847,7 +1847,10 @@ function toggleChat() {
 async function submitApplication() {
   var msg = document.getElementById('applyMsg');
   msg.innerHTML = '<span style="color:var(--gold)">Submitting...</span>';
+  msg.style.display = 'block';
   try {
+    var name = document.getElementById('applyName').value;
+    if (!name) { msg.innerHTML = '<span style="color:#f44336">❌ Please enter your name.</span>'; return; }
     var photoB64 = '';
     var photoName = '';
     var fileInput = document.getElementById('applyPhoto');
@@ -1886,7 +1889,7 @@ async function submitApplication() {
       msg.innerHTML = '<span style="color:#f44336">❌ Error: ' + (data.error || 'Try again') + '</span>';
     }
   } catch(e) {
-    msg.innerHTML = '<span style="color:#f44336">❌ Error submitting. Please try again.</span>';
+    msg.innerHTML = '<span style="color:#f44336">❌ Error: ' + e.message + '</span>';
   }
 }
 
