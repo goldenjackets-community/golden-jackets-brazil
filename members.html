@@ -77,6 +77,15 @@
     </p>
   </div>
 
+  <!-- MFA Verification -->
+  <div class="login-box" id="mfaBox" style="display:none;">
+    <h2>🔐 MFA Verification</h2>
+    <p>Enter the 6-digit code from your authenticator app</p>
+    <input type="text" id="mfaCode" placeholder="000000" maxlength="6" style="text-align:center;font-size:1.5em;letter-spacing:8px;">
+    <button onclick="verifyMfa()">Verify</button>
+    <p class="login-msg" id="mfaMsg"></p>
+  </div>
+
   <!-- Forgot Password -->
   <div class="login-box" id="forgotBox" style="display:none;">
     <h2>🔑 Reset Password</h2>
@@ -229,6 +238,12 @@ async function signIn() {
       sessionStorage.setItem('gj_token', data.AuthenticationResult.IdToken);
       sessionStorage.setItem('gj_email', emailVal);
       showContent(emailVal);
+    } else if (data.ChallengeName === 'SOFTWARE_TOKEN_MFA') {
+      // MFA required - show code input
+      sessionStorage.setItem('gj_mfa_session', data.Session);
+      sessionStorage.setItem('gj_mfa_email', emailVal);
+      document.getElementById('loginBox').style.display = 'none';
+      document.getElementById('mfaBox').style.display = 'block';
     } else {
       msg.innerHTML = '<span style="color:#f44336">❌ ' + (data.message || 'Invalid credentials') + '</span>';
     }
@@ -245,6 +260,98 @@ function showContent(userEmail) {
     document.getElementById('adminBtnWrap').style.display = 'inline';
     var adminPanel = document.getElementById('sec-admin');
     if (adminPanel) adminPanel.style.display = 'block';
+    // Show MFA setup if not already in DOM
+    if (!document.getElementById('mfaSetupCard')) {
+      var mfaCard = document.createElement('div');
+      mfaCard.id = 'mfaSetupCard';
+      mfaCard.className = 'card';
+      mfaCard.innerHTML = '<span class="badge">Security</span><h3>🔐 MFA Setup</h3><p>Enable two-factor authentication for your admin account.</p><br><button onclick="setupMfa()" style="padding:8px 16px;background:linear-gradient(135deg,#FFD700,#B8860B);border:none;border-radius:8px;color:#151528;font-weight:700;cursor:pointer;">Setup MFA</button><div id="mfaSetupOutput" style="margin-top:12px;"></div>';
+      document.querySelector('#content .grid').appendChild(mfaCard);
+    }
+  }
+}
+
+async function verifyMfa() {
+  var code = document.getElementById('mfaCode').value;
+  var msg = document.getElementById('mfaMsg');
+  var session = sessionStorage.getItem('gj_mfa_session');
+  var emailVal = sessionStorage.getItem('gj_mfa_email');
+  msg.innerHTML = '<span style="color:#FFD700">Verifying...</span>';
+  try {
+    var resp = await fetch('https://cognito-idp.' + REGION + '.amazonaws.com/', {
+      method: 'POST',
+      headers: {'Content-Type':'application/x-amz-json-1.1','X-Amz-Target':'AWSCognitoIdentityProviderService.RespondToAuthChallenge'},
+      body: JSON.stringify({ChallengeName:'SOFTWARE_TOKEN_MFA',ClientId:CLIENT_ID,ChallengeResponses:{USERNAME:emailVal,SOFTWARE_TOKEN_MFA_CODE:code},Session:session})
+    });
+    var data = await resp.json();
+    if (data.AuthenticationResult) {
+      sessionStorage.setItem('gj_token', data.AuthenticationResult.IdToken);
+      sessionStorage.setItem('gj_email', emailVal);
+      sessionStorage.removeItem('gj_mfa_session');
+      sessionStorage.removeItem('gj_mfa_email');
+      document.getElementById('mfaBox').style.display = 'none';
+      showContent(emailVal);
+    } else {
+      msg.innerHTML = '<span style="color:#f44336">❌ Invalid code. Try again.</span>';
+    }
+  } catch(e) {
+    msg.innerHTML = '<span style="color:#f44336">❌ Error verifying. Try again.</span>';
+  }
+}
+
+async function setupMfa() {
+  var token = sessionStorage.getItem('gj_token');
+  var out = document.getElementById('mfaSetupOutput');
+  out.innerHTML = '<span style="color:#FFD700">Generating QR code...</span>';
+  try {
+    var resp = await fetch('https://cognito-idp.' + REGION + '.amazonaws.com/', {
+      method: 'POST',
+      headers: {'Content-Type':'application/x-amz-json-1.1','X-Amz-Target':'AWSCognitoIdentityProviderService.AssociateSoftwareToken'},
+      body: JSON.stringify({AccessToken:token})
+    });
+    var data = await resp.json();
+    if (data.SecretCode) {
+      var email = sessionStorage.getItem('gj_email');
+      var otpauth = 'otpauth://totp/GoldenJacketsBrazil:' + email + '?secret=' + data.SecretCode + '&issuer=GoldenJacketsBrazil';
+      var qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(otpauth);
+      out.innerHTML = '<p style="color:var(--gold);margin-bottom:12px;">Scan this QR code with Google Authenticator:</p>' +
+        '<img src="' + qrUrl + '" style="border-radius:8px;margin-bottom:12px;"><br>' +
+        '<input type="text" id="mfaSetupCode" placeholder="Enter 6-digit code" maxlength="6" style="text-align:center;font-size:1.2em;letter-spacing:6px;width:200px;padding:8px;margin-bottom:8px;background:#1a1a30;border:1px solid #2a2a45;border-radius:8px;color:#e0e0e0;">' +
+        '<br><button onclick="confirmMfaSetup()" style="padding:8px 20px;background:linear-gradient(135deg,#FFD700,#B8860B);border:none;border-radius:8px;color:#151528;font-weight:700;cursor:pointer;">Confirm MFA</button>' +
+        '<p id="mfaSetupMsg" style="margin-top:8px;font-size:0.85em;"></p>';
+    } else {
+      out.innerHTML = '<span style="color:#f44336">❌ Error: ' + (data.message || 'Try again') + '</span>';
+    }
+  } catch(e) {
+    out.innerHTML = '<span style="color:#f44336">❌ Error setting up MFA.</span>';
+  }
+}
+
+async function confirmMfaSetup() {
+  var code = document.getElementById('mfaSetupCode').value;
+  var token = sessionStorage.getItem('gj_token');
+  var msg = document.getElementById('mfaSetupMsg');
+  msg.innerHTML = '<span style="color:#FFD700">Verifying...</span>';
+  try {
+    var resp = await fetch('https://cognito-idp.' + REGION + '.amazonaws.com/', {
+      method: 'POST',
+      headers: {'Content-Type':'application/x-amz-json-1.1','X-Amz-Target':'AWSCognitoIdentityProviderService.VerifySoftwareToken'},
+      body: JSON.stringify({AccessToken:token,UserCode:code,FriendlyDeviceName:'GoogleAuthenticator'})
+    });
+    var data = await resp.json();
+    if (data.Status === 'SUCCESS') {
+      // Enable MFA preference
+      await fetch('https://cognito-idp.' + REGION + '.amazonaws.com/', {
+        method: 'POST',
+        headers: {'Content-Type':'application/x-amz-json-1.1','X-Amz-Target':'AWSCognitoIdentityProviderService.SetUserMFAPreference'},
+        body: JSON.stringify({AccessToken:token,SoftwareTokenMfaSettings:{Enabled:true,PreferredMfa:true}})
+      });
+      document.getElementById('mfaSetupOutput').innerHTML = '<span style="color:#4CAF50">✅ MFA enabled! Next login will require authenticator code.</span>';
+    } else {
+      msg.innerHTML = '<span style="color:#f44336">❌ Invalid code. Try again.</span>';
+    }
+  } catch(e) {
+    msg.innerHTML = '<span style="color:#f44336">❌ Error. Try again.</span>';
   }
 }
 
