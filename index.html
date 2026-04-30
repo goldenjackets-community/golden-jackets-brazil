@@ -1838,6 +1838,10 @@ async function submitApplication() {
     var fileInput = document.getElementById('applyPhoto');
     if (fileInput.files.length > 0) {
       var file = fileInput.files[0];
+      if (file.size > 3 * 1024 * 1024) {
+        msg.innerHTML = '<span style="color:#f44336">❌ Photo too large (max 3MB). Please resize or submit without photo.</span>';
+        return;
+      }
       photoName = file.name;
       photoB64 = await new Promise(function(resolve) {
         var reader = new FileReader();
