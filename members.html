@@ -193,7 +193,7 @@ var CLIENT_ID = '6p0utci3h0mfsv02k4848vhhch';
 var REGION = 'us-east-1';
 
 // Check if already logged in
-var token = sessionStorage.getItem('gj_token');
+var token = sessionStorage.getItem('gj_access');
 var email = sessionStorage.getItem('gj_email');
 if (token) { showContent(email); }
 
@@ -245,6 +245,7 @@ async function signIn() {
 
     if (data.AuthenticationResult) {
       sessionStorage.setItem('gj_token', data.AuthenticationResult.IdToken);
+      sessionStorage.setItem('gj_access', data.AuthenticationResult.AccessToken);
       sessionStorage.setItem('gj_email', emailVal);
       showContent(emailVal);
     } else if (data.ChallengeName === 'SOFTWARE_TOKEN_MFA') {
@@ -289,6 +290,7 @@ async function verifyMfa() {
     var data = await resp.json();
     if (data.AuthenticationResult) {
       sessionStorage.setItem('gj_token', data.AuthenticationResult.IdToken);
+      sessionStorage.setItem('gj_access', data.AuthenticationResult.AccessToken);
       sessionStorage.setItem('gj_email', emailVal);
       sessionStorage.removeItem('gj_mfa_session');
       sessionStorage.removeItem('gj_mfa_email');
@@ -303,7 +305,7 @@ async function verifyMfa() {
 }
 
 async function setupMfa() {
-  var token = sessionStorage.getItem('gj_token');
+  var token = sessionStorage.getItem('gj_access');
   var out = document.getElementById('mfaSetupOutput');
   out.innerHTML = '<span style="color:#FFD700">Generating QR code...</span>';
   try {
@@ -332,7 +334,7 @@ async function setupMfa() {
 
 async function confirmMfaSetup() {
   var code = document.getElementById('mfaSetupCode').value;
-  var token = sessionStorage.getItem('gj_token');
+  var token = sessionStorage.getItem('gj_access');
   var msg = document.getElementById('mfaSetupMsg');
   msg.innerHTML = '<span style="color:#FFD700">Verifying...</span>';
   try {
@@ -360,6 +362,7 @@ async function confirmMfaSetup() {
 
 function signOut() {
   sessionStorage.removeItem('gj_token');
+  sessionStorage.removeItem('gj_access');
   sessionStorage.removeItem('gj_email');
   document.getElementById('loginBox').style.display = 'block';
   document.getElementById('content').style.display = 'none';
