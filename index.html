@@ -346,13 +346,13 @@
         <span>🏆 25 Members</span>
         <span>📜 332+ Certifications</span>
         <span>📍 6 States</span>
-        <span>🆕 Welcome Luiz Andrade, Marcus Gioscia & Lucca Bastos!</span>
+        <span class="welcome-new">🆕</span>
         <span>🌐 goldenjacketsbrazil.com</span>
         <span>🇧🇷 Celebrating Brazilian AWS Excellence</span>
         <span>🏆 25 Members</span>
         <span>📜 332+ Certifications</span>
         <span>📍 6 States</span>
-        <span>🆕 Welcome Luiz Andrade, Marcus Gioscia & Lucca Bastos!</span>
+        <span class="welcome-new">🆕</span>
         <span>🌐 goldenjacketsbrazil.com</span>
         <span>🇧🇷 Celebrating Brazilian AWS Excellence</span>
       </div>
@@ -2011,36 +2011,7 @@ function updateCountdowns() {
 updateCountdowns();
 setInterval(updateCountdowns, 1000);
 
-// Auto-update map pins based on member cards
-(function() {
-  var goldCards = document.querySelectorAll('#members .member-card[data-state]');
-  var silverCards = document.querySelectorAll('#challengers .member-card[data-state]');
-  var amberCards = document.querySelectorAll('#alumni .member-card[data-state]');
-  var goldCounts = {};
-  var silverCounts = {};
-  goldCards.forEach(function(c) {
-    var s = c.dataset.state;
-    if (s) goldCounts[s] = (goldCounts[s] || 0) + 1;
-  });
-  silverCards.forEach(function(c) {
-    var s = c.dataset.state;
-    if (s) silverCounts[s] = (silverCounts[s] || 0) + 1;
-  });
-  document.querySelectorAll('.map-pin').forEach(function(pin) {
-    var onclick = pin.getAttribute('onclick') || '';
-    var match = onclick.match(/filterByState\('(\w+)'\)/);
-    if (match) {
-      var state = match[1];
-      var goldEl = pin.querySelector('.gold-count');
-      var silverEl = pin.querySelector('.silver-count');
-      if (goldEl && goldCounts[state]) goldEl.textContent = goldCounts[state];
-      if (silverEl && silverCounts[state]) silverEl.textContent = silverCounts[state];
-      // Hide silver section if no challengers in this state
-      var silverParent = silverEl ? silverEl.parentElement : null;
-      if (silverParent) silverParent.style.display = silverCounts[state] ? '' : 'none';
-    }
-  });
-})();
+// Map pins now updated in Dynamic counters script below
 </script>
 <script>
 // Dynamic counters - auto-count cards, never hardcode again
@@ -2068,12 +2039,51 @@ setInterval(updateCountdowns, 1000);
     if(s.textContent.match(/📍 \d+ States/)) s.textContent = '📍 ' + states.size + ' States';
   });
 
-  // Update total in filter bar
+  // Update totals in filter bars
   var totalSpan = document.querySelector('#members .total');
   if(totalSpan) totalSpan.textContent = 'Total: ' + golden + ' members';
-
   var challTotal = document.querySelector('#challengers .total');
   if(challTotal) challTotal.textContent = 'Total: ' + challengers + ' challengers';
+  var alumniTotal = document.getElementById('alumniTotal');
+  if(alumniTotal) alumniTotal.textContent = 'Total: ' + alumni + ' alumni';
+
+  // Update Welcome banner - last 3 members across all sections
+  var allCards = document.querySelectorAll('.member-card h3');
+  var names = [];
+  allCards.forEach(function(h){ names.push(h.textContent); });
+  var last3 = names.slice(-3);
+  var welcomeText = '🆕 Welcome ';
+  if(last3.length===1) welcomeText += last3[0] + '!';
+  else if(last3.length===2) welcomeText += last3[0] + ' & ' + last3[1] + '!';
+  else welcomeText += last3[0] + ', ' + last3[1] + ' & ' + last3[2] + '!';
+  document.querySelectorAll('.welcome-new').forEach(function(s){ s.textContent = welcomeText; });
+
+  // Update map pins dynamically
+  var goldByState = {};
+  var silverByState = {};
+  var amberByState = {};
+  document.querySelectorAll('#members .member-card[data-state]').forEach(function(c){
+    var s = c.dataset.state; if(s) goldByState[s] = (goldByState[s]||0)+1;
+  });
+  document.querySelectorAll('#challengers .member-card[data-state]').forEach(function(c){
+    var s = c.dataset.state; if(s) silverByState[s] = (silverByState[s]||0)+1;
+  });
+  document.querySelectorAll('#alumni .member-card[data-state]').forEach(function(c){
+    var s = c.dataset.state; if(s) amberByState[s] = (amberByState[s]||0)+1;
+  });
+  document.querySelectorAll('.map-pin').forEach(function(pin){
+    var onclick = pin.getAttribute('onclick')||'';
+    var match = onclick.match(/filterByState\('(\w+)'\)/);
+    if(match){
+      var state = match[1];
+      var goldEl = pin.querySelector('.gold-count');
+      var silverEl = pin.querySelector('.silver-count');
+      var amberEl = pin.querySelector('[style*="D4A830"]');
+      if(goldEl) goldEl.textContent = goldByState[state]||0;
+      if(silverEl){ silverEl.textContent = silverByState[state]||0; pin.style.display = silverByState[state]?'':'none'; }
+      if(amberEl){ amberEl.textContent = amberByState[state]||0; pin.style.display = amberByState[state]?'':'none'; }
+    }
+  });
 })();
 </script>
 </body>
