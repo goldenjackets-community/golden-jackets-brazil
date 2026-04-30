@@ -2026,7 +2026,6 @@ setInterval(updateCountdowns, 1000);
     var s = c.dataset.state;
     if (s) silverCounts[s] = (silverCounts[s] || 0) + 1;
   });
-  });
   document.querySelectorAll('.map-pin').forEach(function(pin) {
     var onclick = pin.getAttribute('onclick') || '';
     var match = onclick.match(/filterByState\('(\w+)'\)/);
