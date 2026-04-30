@@ -81,7 +81,7 @@
   <div class="login-box" id="mfaBox" style="display:none;">
     <h2>🔐 MFA Verification</h2>
     <p>Enter the 6-digit code from your authenticator app</p>
-    <input type="text" id="mfaCode" placeholder="000000" maxlength="6" style="text-align:center;font-size:1.5em;letter-spacing:8px;">
+    <input type="text" id="mfaCode" placeholder="000000" maxlength="6" style="text-align:center;font-size:1.5em;letter-spacing:8px;" onkeydown="if(event.key==='Enter')verifyMfa()">
     <button onclick="verifyMfa()">Verify</button>
     <p class="login-msg" id="mfaMsg"></p>
   </div>
