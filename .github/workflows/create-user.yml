@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   create-user:
-    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.title, 'New Member:')
+    if: github.event.pull_request.merged == true && (startsWith(github.event.pull_request.title, 'New Member:') || startsWith(github.event.pull_request.title, 'Add member'))
     runs-on: ubuntu-latest
     steps:
       - uses: aws-actions/configure-aws-credentials@v4
