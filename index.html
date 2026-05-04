@@ -2139,10 +2139,10 @@ setInterval(updateCountdowns, 1000);
   var alumniTotal = document.getElementById('alumniTotal');
   if(alumniTotal) alumniTotal.textContent = 'Total: ' + alumni + ' alumni';
 
-  // Welcome banner - last 3 member names
-  var allNames = [];
-  document.querySelectorAll('#members .member-card h3, #alumni .member-card h3, #challengers .member-card h3').forEach(function(h){ allNames.push(h.textContent); });
-  var last3 = allNames.slice(-3);
+  // Welcome banner - last 3 Golden Jacket members
+  var gjNames = [];
+  document.querySelectorAll('#members .member-card h3').forEach(function(h){ gjNames.push(h.textContent); });
+  var last3 = gjNames.slice(-3);
   var wt = '🆕 Welcome ';
   if(last3.length===3) wt += last3[0]+', '+last3[1]+' & '+last3[2]+'!';
   else if(last3.length===2) wt += last3[0]+' & '+last3[1]+'!';
