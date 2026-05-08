@@ -216,10 +216,8 @@
     @keyframes rotateBorder { to { --angle: 360deg; } }
     .member-card.founder::before { background: linear-gradient(var(--angle, 0deg), #FFD700, #B8860B, #FFD700); animation: rotateBorder 3s linear infinite; }
     .member-card.founder { box-shadow: 0 0 20px rgba(255,215,0,0.1); }
-    .member-card.founder::after { content: '👑'; position: absolute; top: -10px; left: -10px; font-size: 1.8em; filter: drop-shadow(0 0 8px rgba(255,215,0,0.5)); z-index: 2; }
     .member-card.cofounder::before { background: linear-gradient(var(--angle, 0deg), #DAA520, #8B6914, #DAA520); animation: rotateBorder 4s linear infinite; }
     .member-card.cofounder { box-shadow: 0 0 15px rgba(218,165,32,0.08); }
-    .member-card.cofounder::after { content: '⭐'; position: absolute; top: -10px; left: -10px; font-size: 1.5em; filter: drop-shadow(0 0 6px rgba(255,215,0,0.4)); z-index: 2; }
     .member-card.challenger::before { background: linear-gradient(var(--angle, 0deg), #E8E8E8, #A8A8A8, #D0D0D0, #888888, #E8E8E8); animation: rotateBorder 4s linear infinite; }
     .member-card.challenger { box-shadow: 0 0 20px rgba(200,200,220,0.12); }
     .member-card.challenger h3 { color: #EFEFEF; }
@@ -823,6 +821,7 @@
         <span class="card-number">#1</span>
         <img src="assets/members/ricardogulias.jpg" alt="Ricardo Gulias" class="photo">
         <h3>Ricardo Gulias</h3>
+        <div style="font-size:1.2em;margin-bottom:4px;">👑</div>
         <div class="location">São Paulo, SP, Brazil</div>
         <div class="tags">
           <span class="tag">Golden Jacket</span>
@@ -840,6 +839,7 @@
         <span class="card-number">#2</span>
         <img src="assets/members/wagnerazevedo.jpg" alt="Wagner Azevedo" class="photo">
         <h3>Wagner Azevedo</h3>
+        <div style="font-size:1em;margin-bottom:4px;">⭐</div>
         <div class="location">Campinas, SP, Brazil</div>
         <div class="tags">
           <span class="tag">Golden Jacket</span>
@@ -859,6 +859,7 @@
         <span class="card-number">#3</span>
         <img src="assets/members/erickmancz.jpg" alt="Erick Mancz" class="photo">
         <h3>Erick Mancz</h3>
+        <div style="font-size:1em;margin-bottom:4px;">⭐</div>
         <div class="location">São Paulo, SP, Brazil</div>
         <div class="tags">
           <span class="tag">Golden Jacket</span>
