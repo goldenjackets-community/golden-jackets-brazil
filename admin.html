@@ -283,15 +283,16 @@ function loadPartnerStats(){
     }).catch(function(){ document.getElementById('partnerStats').innerHTML = '<span style="color:#f44336;">Failed to load</span>'; });
 }
 
-// Populate month filter (last 6 months)
+// Populate month filter (all months of 2026)
 (function(){
   var sel = document.getElementById('monthFilter');
+  var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   var now = new Date();
-  for(var i=0;i<6;i++){
-    var d = new Date(now.getFullYear(), now.getMonth()-i, 1);
-    var val = d.getFullYear()+'-'+(('0'+(d.getMonth()+1)).slice(-2));
-    var label = d.toLocaleString('default',{month:'long'})+' '+d.getFullYear();
-    sel.innerHTML += '<option value="'+val+'"'+(i===0?' selected':'')+'>'+label+'</option>';
+  var currentMonth = now.getMonth();
+  for(var i=0;i<12;i++){
+    var val = '2026-'+(('0'+(i+1)).slice(-2));
+    var label = months[i]+' 2026';
+    sel.innerHTML += '<option value="'+val+'"'+(i===currentMonth?' selected':'')+'>'+label+'</option>';
   }
   loadPartnerStats();
 })();
