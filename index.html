@@ -2037,7 +2037,9 @@ async function submitApplication() {
         email: document.getElementById('applyEmail').value,
         memberType: document.getElementById('applyType').value,
         photo: photoB64,
-        photoName: photoName
+        photoName: photoName,
+        consentAccepted: true,
+        consentDate: new Date().toISOString()
       })
     });
     var data = await resp.json();

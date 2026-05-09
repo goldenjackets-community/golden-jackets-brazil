@@ -271,9 +271,28 @@ function showContent(userEmail) {
     document.getElementById('adminBtnWrap').style.display = 'inline';
     var adminPanel = document.getElementById('sec-admin');
     if (adminPanel) adminPanel.style.display = 'block';
-    // Show MFA setup card for admin
     document.getElementById('mfaSetupCard').style.display = 'block';
   }
+  // LGPD consent banner
+  if (!localStorage.getItem('gj_privacy_accepted')) {
+    var banner = document.createElement('div');
+    banner.id = 'privacyBanner';
+    banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#1a1a30;border-top:2px solid #FFD700;padding:20px;z-index:9999;text-align:center;';
+    banner.innerHTML = '<p style="color:#e0e0e0;margin-bottom:12px;font-size:0.9em;">Atualizamos nossa <a href="/privacy.html" target="_blank" style="color:#FFD700;">Política de Privacidade</a>. Para continuar como membro, confirme que leu e aceita os termos.</p><button onclick="acceptPrivacy(\'' + userEmail + '\')" style="padding:10px 24px;background:linear-gradient(135deg,#FFD700,#B8860B);border:none;border-radius:8px;color:#151528;font-weight:700;cursor:pointer;">Li e aceito a Política de Privacidade</button>';
+    document.body.appendChild(banner);
+  }
+}
+
+async function acceptPrivacy(email) {
+  localStorage.setItem('gj_privacy_accepted', new Date().toISOString());
+  document.getElementById('privacyBanner').remove();
+  try {
+    await fetch(GJ_CONFIG.ADMIN_API, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','Authorization': sessionStorage.getItem('gj_token')},
+      body: JSON.stringify({action:'privacy-consent', email: email, consentDate: new Date().toISOString()})
+    });
+  } catch(e) { /* consent saved locally even if API fails */ }
 }
 
 async function verifyMfa() {
