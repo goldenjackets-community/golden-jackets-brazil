@@ -2265,19 +2265,17 @@ setInterval(updateCountdowns, 1000);
   if(!localStorage.getItem('gj_vid')) localStorage.setItem('gj_vid', 'v_'+Math.random().toString(36).substr(2,9));
   var vid = localStorage.getItem('gj_vid');
   var partners = {'tutorialsdojo.com':'tutorialsdojo','sundog-education.com':'sundog'};
-  document.addEventListener('click',function(e){
-    var a = e.target.closest('a[href]');
-    if(!a) return;
+  document.querySelectorAll('a[href]').forEach(function(a){
     var href = a.getAttribute('href')||'';
     for(var domain in partners){
       if(href.indexOf(domain)!==-1){
-        var key = 'gj_click_'+partners[domain];
-        var isNew = !localStorage.getItem(key);
-        localStorage.setItem(key, (parseInt(localStorage.getItem(key)||'0')+1).toString());
-        fetch('https://97i05orlfa.execute-api.us-east-1.amazonaws.com/click',{
-          method:'POST',headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({partner:partners[domain],visitorId:vid,isUnique:isNew})
-        }).catch(function(){});
+        a.addEventListener('click',function(e){
+          var key = 'gj_click_'+partners[domain];
+          var isNew = !localStorage.getItem(key);
+          localStorage.setItem(key, (parseInt(localStorage.getItem(key)||'0')+1).toString());
+          navigator.sendBeacon('https://97i05orlfa.execute-api.us-east-1.amazonaws.com/click',
+            JSON.stringify({partner:partners[domain],visitorId:vid,isUnique:isNew}));
+        });
         break;
       }
     }
