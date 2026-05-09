@@ -101,6 +101,12 @@
       </div>
     </div>
 
+    <!-- Partner Clicks Stats -->
+    <div style="background:#12122a;border:1px solid #2a2a45;border-radius:10px;padding:20px;margin-bottom:24px;">
+      <h3 style="color:#FFD700;font-size:1em;margin-bottom:12px;">📊 Partner Clicks</h3>
+      <div id="partnerStats" style="color:#888;font-size:0.9em;">Loading...</div>
+    </div>
+
     <!-- Create User Form -->
     <div class="form-card" id="createUserForm">
       <h3>➕ Create New User</h3>
@@ -255,6 +261,19 @@ async function restoreBackup() {
   out.style.display = 'block';
   out.innerHTML = '<strong style="color:#4CAF50;">✅ ' + data.message + '</strong>';
 }
+
+// Load partner click stats
+fetch('https://97i05orlfa.execute-api.us-east-1.amazonaws.com/clicks')
+  .then(r=>r.json())
+  .then(d=>{
+    var html = '<table style="width:100%;font-size:0.9em;border-collapse:collapse;">';
+    html += '<tr style="border-bottom:1px solid #2a2a45;"><th style="text-align:left;padding:6px;color:#FFD700;">Partner</th><th style="padding:6px;color:#FFD700;">Total Clicks</th><th style="padding:6px;color:#FFD700;">Unique Visitors</th></tr>';
+    for(var p in d){
+      html += '<tr style="border-bottom:1px solid #1a1a30;"><td style="padding:6px;color:#e0e0e0;">'+ p +'</td><td style="padding:6px;text-align:center;color:#4CAF50;font-weight:700;">'+ d[p].total_clicks +'</td><td style="padding:6px;text-align:center;color:#2196F3;font-weight:700;">'+ d[p].unique_visitors +'</td></tr>';
+    }
+    html += '</table>';
+    document.getElementById('partnerStats').innerHTML = html;
+  }).catch(function(){ document.getElementById('partnerStats').innerHTML = '<span style="color:#f44336;">Failed to load</span>'; });
 </script>
 </body>
 </html>
