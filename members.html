@@ -390,6 +390,11 @@ function signOut() {
 
 async function submitArticle() {
   var msg = document.getElementById('artMsg');
+  var title = document.getElementById('artTitle').value.trim();
+  var url = document.getElementById('artUrl').value.trim();
+  var summary = document.getElementById('artSummary').value.trim();
+  if (!title || !url || !summary) { msg.innerHTML = '<span style="color:#f44336">❌ Please fill in all fields (title, URL, and summary).</span>'; return; }
+  if (!url.startsWith('http')) { msg.innerHTML = '<span style="color:#f44336">❌ Please enter a valid URL starting with http.</span>'; return; }
   msg.innerHTML = '<span style="color:#FFD700">Submitting...</span>';
   var author = sessionStorage.getItem('gj_email') || 'unknown';
   try {
@@ -397,9 +402,9 @@ async function submitArticle() {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        title: document.getElementById('artTitle').value,
-        url: document.getElementById('artUrl').value,
-        summary: document.getElementById('artSummary').value,
+        title: title,
+        url: url,
+        summary: summary,
         author: author
       })
     });
