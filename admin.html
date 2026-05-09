@@ -261,7 +261,8 @@ async function backupStatus() {
 }
 
 async function restoreBackup() {
-  if (!confirm('Restore site from latest backup? This will overwrite current S3 content.')) return;
+  if (!confirm('⚠️ ATENÇÃO: Isso vai sobrescrever o site atual com o último backup manual.\n\nTem certeza que quer restaurar?')) return;
+  if (!confirm('ÚLTIMA CONFIRMAÇÃO: Digite OK para restaurar.\n\nIsso NÃO pode ser desfeito facilmente (apenas via git push).')) return;
   var data = await adminCall('restore-backup');
   if (!data) return;
   var out = document.getElementById('adminOutput');
