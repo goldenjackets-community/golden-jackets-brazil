@@ -1422,7 +1422,7 @@
   <!-- Challengers Section -->
   <section id="challengers" class="members" style="text-align:center;">
     <h2 style="font-size:1.6em;color:#C0C0C0;margin-bottom:8px;">⚔️ Challengers</h2>
-    <p style="color:var(--text-muted);font-size:0.9em;margin-bottom:8px;">Professionals with 11 of 12 AWS certifications — one exam away from the Golden Jacket</p>
+    <p style="color:var(--text-muted);font-size:0.9em;margin-bottom:8px;">Professionals with 10 or more AWS certifications — on the final stretch to the Golden Jacket</p>
     <p style="color:#C0C0C0;font-size:0.75em;margin-bottom:30px;font-style:italic;">Complete your final certification to earn your Golden Jacket and unlock the Members Lounge 🏆</p>
     <div class="filter-bar">
       <label>Filter by State:</label>
@@ -1827,7 +1827,7 @@
       <select id="applyType" style="width:100%;padding:10px 14px;margin-bottom:10px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.9em;font-family:inherit;">
         <option value="golden">🏆 Golden Jacket — All 12 certifications active</option>
         <option value="alumni">🎖️ Alumni — Previously held all 12, some expired</option>
-        <option value="challenger">⚔️ Challenger — 11 of 12 certifications</option>
+        <option value="challenger">⚔️ Challenger — 10+ of 12 certifications</option>
       </select>
       <label>Photo</label>
       <input type="file" id="applyPhoto" accept="image/*">
@@ -2209,7 +2209,7 @@ setInterval(updateCountdowns, 1000);
   var challengers = document.querySelectorAll('#challengers .member-card.challenger').length;
   var alumni = document.querySelectorAll('#alumni .member-card.alumni').length;
   var total = golden + challengers + alumni;
-  var certs = (golden * 12) + (challengers * 11) + (alumni * 12);
+  var certs = (golden * 12) + (challengers * 11) + (alumni * 12); // approximate, challengers have 10-11
   var states = new Set();
   document.querySelectorAll('.member-card[data-state]').forEach(function(c){ states.add(c.dataset.state); });
 
