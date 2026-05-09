@@ -43,6 +43,7 @@
     <div class="logo">GJ <span>Brazil</span> · Lounge</div>
     <a href="/">← Back to site</a>
   </nav>
+  <script src="/config.js"></script>
 
 
   <!-- Login -->
@@ -266,7 +267,7 @@ function showContent(userEmail) {
   document.getElementById('loginBox').style.display = 'none';
   document.getElementById('content').style.display = 'block';
   document.getElementById('userEmail').textContent = userEmail;
-  if (userEmail === 'ricardo.gulias@darede.com.br') {
+  if (userEmail === GJ_CONFIG.ADMIN_EMAIL) {
     document.getElementById('adminBtnWrap').style.display = 'inline';
     var adminPanel = document.getElementById('sec-admin');
     if (adminPanel) adminPanel.style.display = 'block';
@@ -495,8 +496,8 @@ async function confirmReset() {
 </body>
 </html>
 <script>
-var ADMIN_EMAIL = 'ricardo.gulias@darede.com.br';
-var ADMIN_API = 'https://kqiq2bltjd.execute-api.us-east-1.amazonaws.com/admin';
+var ADMIN_EMAIL = GJ_CONFIG.ADMIN_EMAIL;
+var ADMIN_API = GJ_CONFIG.ADMIN_API;
 
 function toggleAdmin() {
   var panel = document.getElementById('sec-admin');
