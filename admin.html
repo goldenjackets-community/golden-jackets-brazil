@@ -94,6 +94,21 @@
         <div class="label">Card Generator</div>
         <div class="desc">Generate member cards</div>
       </a>
+      <div class="tool-btn" onclick="exportCSV()">
+        <div class="icon">📥</div>
+        <div class="label">Export CSV</div>
+        <div class="desc">Download members list</div>
+      </div>
+      <div class="tool-btn" onclick="showMetrics()">
+        <div class="icon">📈</div>
+        <div class="label">Metrics</div>
+        <div class="desc">Members & articles stats</div>
+      </div>
+      <div class="tool-btn" onclick="promoteChallenger()">
+        <div class="icon">🏆</div>
+        <div class="label">Promote</div>
+        <div class="desc">Challenger → Golden Jacket</div>
+      </div>
       <div class="tool-btn" onclick="showBacklog()">
         <div class="icon">📋</div>
         <div class="label">Backlog</div>
@@ -298,6 +313,62 @@ async function restoreBackup() {
   var out = document.getElementById('adminOutput');
   out.style.display = 'block';
   out.innerHTML = '<strong style="color:#4CAF50;">✅ ' + data.message + '</strong>';
+}
+
+// Export members as CSV
+async function exportCSV() {
+  var data = await adminCall('list-users');
+  if (!data || !data.users) return;
+  var csv = 'Email,Status,Created\n';
+  data.users.forEach(function(u){ csv += u.email+','+u.status+','+u.created+'\n'; });
+  var blob = new Blob([csv], {type:'text/csv'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'golden-jackets-members-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+  document.getElementById('adminOutput').innerHTML = '<strong style="color:#4CAF50;">✅ CSV downloaded (' + data.users.length + ' members)</strong>';
+}
+
+// Metrics dashboard
+async function showMetrics() {
+  var data = await adminCall('list-users');
+  if (!data || !data.users) return;
+  var out = document.getElementById('adminOutput');
+  var total = data.users.length;
+  var confirmed = data.users.filter(function(u){return u.status==='CONFIRMED';}).length;
+  var pending = total - confirmed;
+  // Group by month
+  var byMonth = {};
+  data.users.forEach(function(u){
+    var m = u.created ? u.created.slice(0,7) : 'unknown';
+    byMonth[m] = (byMonth[m]||0) + 1;
+  });
+  var html = '<strong style="color:#FFD700;">📈 Community Metrics</strong><br><br>';
+  html += '<table style="width:100%;font-size:0.9em;border-collapse:collapse;">';
+  html += '<tr style="border-bottom:1px solid #2a2a45;"><th style="text-align:left;padding:6px;color:#FFD700;">Metric</th><th style="padding:6px;color:#FFD700;">Value</th></tr>';
+  html += '<tr><td style="padding:6px;color:#e0e0e0;">Total Members</td><td style="padding:6px;text-align:center;color:#4CAF50;font-weight:700;">'+total+'</td></tr>';
+  html += '<tr><td style="padding:6px;color:#e0e0e0;">Confirmed</td><td style="padding:6px;text-align:center;color:#4CAF50;font-weight:700;">'+confirmed+'</td></tr>';
+  html += '<tr><td style="padding:6px;color:#e0e0e0;">Pending</td><td style="padding:6px;text-align:center;color:#FF9800;font-weight:700;">'+pending+'</td></tr>';
+  html += '</table><br>';
+  html += '<strong style="color:#FFD700;">Members by Month</strong><br><br>';
+  html += '<table style="width:100%;font-size:0.9em;border-collapse:collapse;">';
+  html += '<tr style="border-bottom:1px solid #2a2a45;"><th style="text-align:left;padding:6px;color:#FFD700;">Month</th><th style="padding:6px;color:#FFD700;">New Members</th></tr>';
+  Object.keys(byMonth).sort().reverse().forEach(function(m){
+    html += '<tr><td style="padding:6px;color:#e0e0e0;">'+m+'</td><td style="padding:6px;text-align:center;color:#2196F3;font-weight:700;">'+byMonth[m]+'</td></tr>';
+  });
+  html += '</table>';
+  out.innerHTML = html;
+}
+
+// Promote Challenger to Golden Jacket
+async function promoteChallenger() {
+  var email = prompt('Enter the Challenger email to promote to Golden Jacket:');
+  if (!email) return;
+  var confirm1 = confirm('Promote ' + email + ' from Challenger to Golden Jacket?\n\nThis will NOT automatically update the site card. You need to manually move the card in index.html from Challengers to Golden Jackets section.');
+  if (!confirm1) return;
+  var out = document.getElementById('adminOutput');
+  out.style.display = 'block';
+  out.innerHTML = '<strong style="color:#FF9800;">⚠️ Reminder:</strong> To complete the promotion, manually move the member card in index.html from the Challengers section to Golden Jackets section, update the tags, and push to main.<br><br><strong style="color:#4CAF50;">Member ' + email + ' flagged for promotion.</strong>';
 }
 
 // Load partner click stats
