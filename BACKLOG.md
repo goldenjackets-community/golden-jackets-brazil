@@ -96,9 +96,9 @@
 
 ### Funcionalidades
 - [x] Email de boas-vindas automático (Cognito envia senha temporária)
-- [ ] Promover Challenger → Golden Jacket (botão no admin)
-- [ ] Dashboard de métricas no admin (membros/mês, artigos/mês)
-- [ ] Exportar lista de membros (CSV) no admin
+- [x] Promover Challenger → Golden Jacket (botão no admin) — 10/05/2026
+- [x] Dashboard de métricas no admin (membros/mês) — 10/05/2026
+- [x] Exportar lista de membros (CSV) no admin — 10/05/2026
 - [x] Notificação no Discord quando novo membro entra
 
 ### Comunidade
