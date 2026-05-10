@@ -95,11 +95,11 @@
 - [ ] Minificação HTML/CSS/JS no pipeline
 
 ### Funcionalidades
-- [ ] Email de boas-vindas automático (aguardando SES produção)
+- [x] Email de boas-vindas automático (Cognito envia senha temporária)
 - [ ] Promover Challenger → Golden Jacket (botão no admin)
 - [ ] Dashboard de métricas no admin (membros/mês, artigos/mês)
 - [ ] Exportar lista de membros (CSV) no admin
-- [ ] Notificação no Discord quando novo membro entra
+- [x] Notificação no Discord quando novo membro entra
 
 ### Comunidade
 - [ ] Buscar patrocinadores (media kit pronto)
