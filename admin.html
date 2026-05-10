@@ -164,11 +164,41 @@ async function adminCall(action, extra) {
   try {
     var body = Object.assign({action: action}, extra || {});
     var resp = await fetch(ADMIN_API, {method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+sessionStorage.getItem('gj_token')}, body: JSON.stringify(body)});
+    // If unauthorized, try refresh token
+    if (resp.status === 401 || resp.status === 403) {
+      var refreshed = await refreshSession();
+      if (refreshed) {
+        resp = await fetch(ADMIN_API, {method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+sessionStorage.getItem('gj_token')}, body: JSON.stringify(body)});
+      } else {
+        out.innerHTML = '<span style="color:#f44336;">Session expired. Please <a href="/members.html" style="color:#FFD700;">log in again</a>.</span>';
+        return null;
+      }
+    }
     return await resp.json();
   } catch(e) {
     out.innerHTML = '<span style="color:#f44336;">Error: ' + e.message + '</span>';
     return null;
   }
+}
+
+// Refresh session function (uses Cognito refresh token)
+async function refreshSession() {
+  var refreshToken = sessionStorage.getItem('gj_refresh');
+  if (!refreshToken) return false;
+  try {
+    var resp = await fetch('https://cognito-idp.us-east-1.amazonaws.com/', {
+      method: 'POST',
+      headers: {'Content-Type':'application/x-amz-json-1.1','X-Amz-Target':'AWSCognitoIdentityProviderService.InitiateAuth'},
+      body: JSON.stringify({AuthFlow:'REFRESH_TOKEN_AUTH',ClientId:'6p0utci3h0mfsv02k4848vhhch',AuthParameters:{REFRESH_TOKEN:refreshToken}})
+    });
+    var data = await resp.json();
+    if (data.AuthenticationResult) {
+      sessionStorage.setItem('gj_token', data.AuthenticationResult.IdToken);
+      sessionStorage.setItem('gj_access', data.AuthenticationResult.AccessToken);
+      return true;
+    }
+  } catch(e) {}
+  return false;
 }
 
 async function listUsers() {

@@ -193,6 +193,26 @@ var POOL_ID = 'us-east-1_Z0VzzrmIX';
 var CLIENT_ID = '6p0utci3h0mfsv02k4848vhhch';
 var REGION = 'us-east-1';
 
+// Auto-refresh token function
+async function refreshSession() {
+  var refreshToken = sessionStorage.getItem('gj_refresh');
+  if (!refreshToken) return false;
+  try {
+    var resp = await fetch('https://cognito-idp.' + REGION + '.amazonaws.com/', {
+      method: 'POST',
+      headers: {'Content-Type':'application/x-amz-json-1.1','X-Amz-Target':'AWSCognitoIdentityProviderService.InitiateAuth'},
+      body: JSON.stringify({AuthFlow:'REFRESH_TOKEN_AUTH',ClientId:CLIENT_ID,AuthParameters:{REFRESH_TOKEN:refreshToken}})
+    });
+    var data = await resp.json();
+    if (data.AuthenticationResult) {
+      sessionStorage.setItem('gj_token', data.AuthenticationResult.IdToken);
+      sessionStorage.setItem('gj_access', data.AuthenticationResult.AccessToken);
+      return true;
+    }
+  } catch(e) {}
+  return false;
+}
+
 // Check if already logged in
 var token = sessionStorage.getItem('gj_access');
 var email = sessionStorage.getItem('gj_email');
@@ -247,6 +267,7 @@ async function signIn() {
     if (data.AuthenticationResult) {
       sessionStorage.setItem('gj_token', data.AuthenticationResult.IdToken);
       sessionStorage.setItem('gj_access', data.AuthenticationResult.AccessToken);
+      sessionStorage.setItem('gj_refresh', data.AuthenticationResult.RefreshToken);
       sessionStorage.setItem('gj_email', emailVal);
       showContent(emailVal);
     } else if (data.ChallengeName === 'SOFTWARE_TOKEN_MFA') {
@@ -311,6 +332,7 @@ async function verifyMfa() {
     if (data.AuthenticationResult) {
       sessionStorage.setItem('gj_token', data.AuthenticationResult.IdToken);
       sessionStorage.setItem('gj_access', data.AuthenticationResult.AccessToken);
+      sessionStorage.setItem('gj_refresh', data.AuthenticationResult.RefreshToken || sessionStorage.getItem('gj_refresh'));
       sessionStorage.setItem('gj_email', emailVal);
       sessionStorage.removeItem('gj_mfa_session');
       sessionStorage.removeItem('gj_mfa_email');
