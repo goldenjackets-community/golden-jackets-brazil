@@ -116,7 +116,7 @@
 - [ ] EventBridge: lembrete automático para pendentes (a cada 24h)
 - [ ] Cognito custom domain (auth.goldenjacketsbrazil.com)
 - [ ] SES custom domain (noreply@goldenjacketsbrazil.com)
-- [ ] Monitoramento de custos (Budget alarm)
+- [x] Monitoramento de custos (Budget alarm $10/mês) — 10/05/2026
 
 ### Site
 - [x] Dark/Light mode persistente (já implementado com localStorage)
