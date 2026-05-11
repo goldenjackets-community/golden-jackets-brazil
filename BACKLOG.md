@@ -119,7 +119,7 @@
 - [ ] Monitoramento de custos (Budget alarm)
 
 ### Site
-- [ ] Dark/Light mode persistente (salvar preferência)
+- [x] Dark/Light mode persistente (já implementado com localStorage)
 - [ ] Página individual por membro (perfil completo)
 - [ ] Blog integrado (posts longos)
 - [ ] Internacionalização completa (PT/EN toggle)
