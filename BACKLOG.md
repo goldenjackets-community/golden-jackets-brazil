@@ -126,12 +126,12 @@
 - [ ] PWA (Progressive Web App) — acesso offline
 
 ### Comunidade
-- [ ] Programa de mentoria (Golden Jackets → Challengers)
-- [ ] Ranking de contribuições (artigos, talks, mentoria)
+- [x] Programa de mentoria (Golden Jackets → Challengers) — iniciado 08/05/2026
+- [x] Ranking de contribuições (medalhas automáticas 🥇🥈🥉 na seção Articles)
 - [ ] Certificação interna da comunidade
 - [ ] Meetups regionais (SP, RJ, PR)
 - [ ] Parceria com AWS User Groups
-- [ ] Submeter para AWS Community Builder / Hero
+- [x] Submeter para AWS Community Builder / Hero — em andamento (Taylor, João Helena, João Gabriel)
 
 ---
 
