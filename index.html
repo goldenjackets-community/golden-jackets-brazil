@@ -1793,6 +1793,16 @@
         <input type="text" id="sponsorName" placeholder="Your name" style="width:100%;padding:10px;margin-bottom:8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;">
         <input type="text" id="sponsorCompany" placeholder="Company" style="width:100%;padding:10px;margin-bottom:8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;">
         <input type="email" id="sponsorEmail" placeholder="Email" style="width:100%;padding:10px;margin-bottom:8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;">
+        <select id="sponsorTier" style="width:100%;padding:10px;margin-bottom:8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;">
+          <option value="" disabled selected>Interested in...</option>
+          <option value="Founding Sponsor (R$8.000/yr)">🏆 Founding Sponsor — R$8.000/yr</option>
+          <option value="Gold (R$5.000/yr)">🥇 Gold — R$5.000/yr</option>
+          <option value="Silver (R$3.000/yr)">🥈 Silver — R$3.000/yr</option>
+          <option value="Bronze (R$1.500/yr)">🥉 Bronze — R$1.500/yr</option>
+          <option value="Event Sponsorship">🎤 Event Sponsorship</option>
+          <option value="Other">💬 Other / Let's talk</option>
+        </select>
+        <textarea id="sponsorMessage" placeholder="Additional message (optional)" rows="2" style="width:100%;padding:10px;margin-bottom:8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;resize:vertical;"></textarea>
         
         <button onclick="submitSponsor()" style="width:100%;padding:12px;background:linear-gradient(135deg,#FFD700,#B8860B);border:none;border-radius:8px;color:#151528;font-weight:700;font-size:0.95em;cursor:pointer;">Send Interest →</button>
         <p id="sponsorStatus" style="margin-top:10px;font-size:0.85em;"></p>
@@ -1946,11 +1956,13 @@
       var name=document.getElementById('sponsorName').value;
       var company=document.getElementById('sponsorCompany').value;
       var email=document.getElementById('sponsorEmail').value;
+      var tier=document.getElementById('sponsorTier').value;
+      var message=document.getElementById('sponsorMessage').value;
       
       if(!name||!email){s.innerHTML='<span style="color:#f44336">Please fill in name and email</span>';return;}
       s.innerHTML='<span style="color:var(--gold)">Sending...</span>';
       fetch('https://kqiq2bltjd.execute-api.us-east-1.amazonaws.com/sponsor',{method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({name:name,company:company,email:email})
+        body:JSON.stringify({name:name,company:company,email:email,tier:tier,message:message})
       }).then(function(){
         var n=document.getElementById('sponsorName').value;var e=document.getElementById('sponsorEmail').value;document.getElementById('sponsorForm').innerHTML='<p style="color:#4CAF50;font-size:1.1em;margin-bottom:8px;">✅ Thank you, '+n+'!</p><p style="color:var(--text-muted);font-size:0.9em;">We received your interest and our team will reach out to <strong>'+e+'</strong> within 48 hours with our sponsorship options.</p><p style="color:var(--gold);font-size:0.85em;margin-top:12px;">Golden Jackets Brazil 🏆</p>';
       }).catch(function(){
