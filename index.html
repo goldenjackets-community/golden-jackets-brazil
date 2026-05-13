@@ -2227,9 +2227,6 @@ function toggleLang() {
 function applyLang() {
   var btns = document.querySelectorAll('.lang-toggle');
   
-  // Toggle about text
-  document.querySelector('.about-text-en').style.display = currentLang === 'en' ? '' : 'none';
-  document.querySelector('.about-text-pt').style.display = currentLang === 'pt' ? '' : 'none';
   btns.forEach(function(b) { b.innerHTML = currentLang === 'en' ? '<img src="https://flagcdn.com/w40/br.png" width="20" height="14" alt="PT" class="flag-img">' : '<img src="https://flagcdn.com/w40/us.png" width="20" height="14" alt="EN" class="flag-img">'; });
 
   var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
@@ -2257,8 +2254,7 @@ function applyLang() {
 
 if (currentLang === 'pt') {
   window.addEventListener('DOMContentLoaded', function() {
-    if(document.querySelector('.about-text-en')) document.querySelector('.about-text-en').style.display='none';
-    if(document.querySelector('.about-text-pt')) document.querySelector('.about-text-pt').style.display='';
+
     applyLang();
     document.querySelectorAll('.lang-toggle').forEach(function(b) { b.innerHTML = '<img src="https://flagcdn.com/w40/us.png" width="20" height="14" alt="EN" class="flag-img">'; });
   });
