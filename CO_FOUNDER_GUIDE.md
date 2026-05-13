@@ -140,4 +140,3 @@ WhatsApp: +55 11 93248-9800
 
 ---
 
-*Golden Jackets Brazil · Co-Founder Operations Guide · v1.0 · May 2026*
