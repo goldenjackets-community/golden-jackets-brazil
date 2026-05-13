@@ -2374,6 +2374,16 @@ setInterval(updateCountdowns, 1000);
   var alumniTotal = document.getElementById('alumniTotal');
   if(alumniTotal) alumniTotal.textContent = 'Total: ' + alumni + ' alumni';
 
+  
+  // Translate ticker
+  document.querySelectorAll('.ticker-content span').forEach(function(s) {
+    if (currentLang === 'pt') {
+      s.textContent = s.textContent.replace('Members', 'Membros').replace('Certifications', 'Certificações').replace('States', 'Estados').replace('Celebrating Brazilian AWS Excellence', 'Celebrando a Excelência AWS Brasileira');
+    } else {
+      s.textContent = s.textContent.replace('Membros', 'Members').replace('Certificações', 'Certifications').replace('Estados', 'States').replace('Celebrando a Excelência AWS Brasileira', 'Celebrating Brazilian AWS Excellence');
+    }
+  });
+
   // Welcome banner - last 3 Golden Jacket members
   var gjNames = [];
   document.querySelectorAll('#members .member-card h3').forEach(function(h){ gjNames.push(h.textContent); });
