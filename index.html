@@ -2375,6 +2375,11 @@ setInterval(updateCountdowns, 1000);
   if(alumniTotal) alumniTotal.textContent = 'Total: ' + alumni + ' alumni';
 
   
+  
+  // Translate Welcome heading
+  var welcomeSpan = document.querySelector('h1 [data-i18n="welcome"]');
+  if (welcomeSpan) welcomeSpan.textContent = currentLang === 'pt' ? 'Bem-vindo ao ' : 'Welcome to ';
+
   // Translate ticker
   document.querySelectorAll('.ticker-content span').forEach(function(s) {
     if (currentLang === 'pt') {
