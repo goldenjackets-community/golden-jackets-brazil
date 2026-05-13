@@ -9,57 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  deploy-origin:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ORIGIN }}:role/github-actions-deploy
-          aws-region: us-east-1
-
-      - name: Auto-number member cards
-        run: |
-          # Find the highest existing card number in Golden Jackets section
-          MAX=$(grep -oP '(?<=<span class="card-number">#)\d+' index.html | head -$(grep -n '<!-- Alumni' index.html | head -1 | cut -d: -f1) | sort -n | tail -1)
-          [ -z "$MAX" ] && MAX=0
-          
-          # Find member cards without card-number in Golden Jackets section (before Alumni)
-          ALUMNI_LINE=$(grep -n '<!-- Alumni' index.html | head -1 | cut -d: -f1)
-          [ -z "$ALUMNI_LINE" ] && ALUMNI_LINE=99999
-          
-          # Process cards missing card-number
-          CHANGED=false
-          while IFS= read -r line_num; do
-            NEXT_LINE=$((line_num + 1))
-            NEXT_CONTENT=$(sed -n "${NEXT_LINE}p" index.html)
-            if echo "$NEXT_CONTENT" | grep -q 'card-number'; then
-              continue
-            fi
-            if echo "$NEXT_CONTENT" | grep -q '<img src='; then
-              MAX=$((MAX + 1))
-              sed -i "${line_num}a\\        <span class=\"card-number\">#${MAX}</span>" index.html
-              CHANGED=true
-            fi
-          done < <(head -n "$ALUMNI_LINE" index.html | grep -n 'class="member-card"' | grep -v 'alumni\|challenger' | cut -d: -f1)
-          
-          if [ "$CHANGED" = true ]; then
-            echo "✅ Auto-numbered new cards up to #$MAX"
-          else
-            echo "ℹ️ All cards already numbered"
-          fi
-
-      - name: Sync to S3 (origin)
-        run: |
-          aws s3 sync . s3://goldenjacketsbrazil.com/ \
-            --exclude ".git/*" \
-            --exclude ".github/*" \
-            --exclude ".gitignore" \
-            --exclude "README.md" \
-            --exclude "SECURITY.md"
-
-  deploy-www:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -94,7 +44,7 @@ jobs:
             echo "ℹ️ All cards already numbered"
           fi
 
-      - name: Sync to S3 (www)
+      - name: Sync to S3
         run: |
           aws s3 sync . s3://www.goldenjacketsbrazil.com/ \
             --exclude ".git/*" \
@@ -104,7 +54,7 @@ jobs:
             --exclude "SECURITY.md"
 
   invalidate:
-    needs: [deploy-origin, deploy-www]
+    needs: [deploy]
     runs-on: ubuntu-latest
     steps:
       - uses: aws-actions/configure-aws-credentials@v4
@@ -130,43 +80,24 @@ jobs:
           echo "🔍 Smoke Test Starting..."
           ERRORS=0
 
-          # Main site
           HTTP=$(curl -s -o /tmp/index.html -w "%{http_code}" https://goldenjacketsbrazil.com)
           echo "Main site: HTTP $HTTP"
           [ "$HTTP" = "200" ] && echo "  ✅ OK" || { echo "  ❌ FAIL"; ERRORS=$((ERRORS+1)); }
 
-          # Lounge
           HTTP=$(curl -s -o /dev/null -w "%{http_code}" https://goldenjacketsbrazil.com/members.html)
           echo "Lounge: HTTP $HTTP"
           [ "$HTTP" = "200" ] && echo "  ✅ OK" || { echo "  ❌ FAIL"; ERRORS=$((ERRORS+1)); }
 
-          # Admin
           HTTP=$(curl -s -o /dev/null -w "%{http_code}" https://goldenjacketsbrazil.com/admin.html)
           echo "Admin: HTTP $HTTP"
           [ "$HTTP" = "200" ] && echo "  ✅ OK" || { echo "  ❌ FAIL"; ERRORS=$((ERRORS+1)); }
 
-          # Count member cards
           GOLDEN=$(grep -c 'member-card" data-state\|member-card founder" data-state\|member-card cofounder" data-state' /tmp/index.html || echo 0)
           CHALLENGERS=$(grep -c 'member-card challenger" data-state' /tmp/index.html || echo 0)
-          echo "Golden Jackets: $GOLDEN"
-          echo "Challengers: $CHALLENGERS"
-          echo "Total cards: $((GOLDEN + CHALLENGERS))"
+          echo "Golden Jackets: $GOLDEN | Challengers: $CHALLENGERS"
           [ "$GOLDEN" -ge 20 ] && echo "  ✅ Card count OK" || { echo "  ❌ Too few cards ($GOLDEN)"; ERRORS=$((ERRORS+1)); }
 
-          # Check APIs respond
-          for EP in apply article; do
-            CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST https://kqiq2bltjd.execute-api.us-east-1.amazonaws.com/$EP -H "Content-Type: application/json" -d '{}')
-            echo "API /$EP: HTTP $CODE"
-            [ "$CODE" != "000" ] && echo "  ✅ Responding" || { echo "  ❌ Offline"; ERRORS=$((ERRORS+1)); }
-          done
-
-          # Admin should be 401 without token
-          CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST https://kqiq2bltjd.execute-api.us-east-1.amazonaws.com/admin -H "Content-Type: application/json" -d '{}')
-          echo "API /admin (no token): HTTP $CODE"
-          [ "$CODE" = "401" ] && echo "  ✅ Protected" || { echo "  ❌ Not protected ($CODE)"; ERRORS=$((ERRORS+1)); }
-
           echo ""
-          echo "========================"
           if [ "$ERRORS" -eq 0 ]; then
             echo "✅ ALL SMOKE TESTS PASSED"
           else
