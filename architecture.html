@@ -171,11 +171,33 @@ function render() {
     el.style.top = n.y + 'px';
     el.dataset.id = n.id;
     let html = `<div class="icon">${n.icon}</div><div class="name">${n.name}</div><div class="detail">${n.detail.replace(/\n/g,'<br>')}</div>`;
+    // View Logs/Metrics link for all services
+    let logUrl = '';
+    const region = 'us-east-1';
+    const base = `https://${region}.console.aws.amazon.com`;
     if (n.id && n.id.startsWith('lambda-')) {
       const funcName = n.id.replace('lambda-','');
-      const logUrl = `https://us-east-1.console.aws.amazon.com/cloudwatch/home?region=us-east-1#logsV2:log-groups/log-group/$252Faws$252Flambda$252F${funcName}`;
+      logUrl = `${base}/cloudwatch/home?region=${region}#logsV2:log-groups/log-group/$252Faws$252Flambda$252F${funcName}`;
+    } else if (n.type === 'cloudfront') {
+      logUrl = `${base}/cloudfront/v4/home#/distributions`;
+    } else if (n.type === 's3') {
+      logUrl = `${base}/s3/home?region=${region}`;
+    } else if (n.id === 'cognito') {
+      logUrl = `${base}/cognito/v2/idp/user-pools/us-east-1_Z0VzzrmIX/users?region=${region}`;
+    } else if (n.id === 'dynamodb') {
+      logUrl = `${base}/dynamodbv2/home?region=${region}#tables`;
+    } else if (n.id === 'apigateway') {
+      logUrl = `${base}/apigateway/main/apis?region=${region}`;
+    } else if (n.id === 'sns') {
+      logUrl = `${base}/sns/v3/home?region=${region}#/topics`;
+    } else if (n.id === 'backup') {
+      logUrl = `${base}/backup/home?region=${region}#/backupvaults`;
+    } else if (n.id === 'route53') {
+      logUrl = `https://us-east-1.console.aws.amazon.com/route53/v2/hostedzones?region=${region}`;
+    }
+    if (logUrl) {
       const color = n.alarm === 'ALARM' ? '#ef4444' : '#888';
-      html += `<a href="${logUrl}" target="_blank" style="display:block;margin-top:6px;font-size:0.65em;color:${color};text-decoration:underline;">📋 View Logs →</a>`;
+      html += `<a href="${logUrl}" target="_blank" style="display:block;margin-top:6px;font-size:0.65em;color:${color};text-decoration:underline;">📋 View →</a>`;
     }
     el.innerHTML = html;
     el.addEventListener('mouseenter', e => showTooltip(e, n));
