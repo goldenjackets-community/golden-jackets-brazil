@@ -34,9 +34,15 @@
 - [x] Architecture: Pulse red animation on alarm + View Logs link
 - [x] Architecture: Drag-and-fix nodes + save pan/zoom position
 - [x] Architecture: View → deep link to AWS Console for all services
+- [x] Architecture: Animated edges (flow animation)
 - [x] Perks/cupons distributed (Tutorials Dojo + Sundog Education)
 - [x] Google Form: Podcast & Lives planning (5 responses)
 - [x] Knowledge base: 30+ items indexed
+- [x] Job Board in Members Lounge (post, list, remove, I'm Interested, SNS notifications)
+- [x] Post LinkedIn: artigo onboarding (published)
+- [x] Post Company Page: artigo onboarding (published)
+- [x] Post LinkedIn: perks exclusivos (published)
+- [x] Email Accenture: media kit enviado (jose.c.carvalheira@accenture.com)
 
 ## 🔄 In Progress
 
@@ -76,6 +82,8 @@
 - [ ] Convidar Geries pro podcast (quando tiver 4-5 chapters)
 - [ ] Separate visitor counter per chapter (BR independent)
 - [ ] Admin tool: self-service tag editing for members
+- [ ] SES: sair do sandbox para emails HTML bonitos
+- [ ] Job Board: notificar todos os membros quando vaga postada (depende SES)
 - [ ] Architecture: make Lambda discovery fully dynamic (API Gateway auto-detect)
 - [ ] Post LinkedIn: perks exclusivos (draft pronto)
 - [ ] Post LinkedIn: artigo onboarding (draft pronto)
