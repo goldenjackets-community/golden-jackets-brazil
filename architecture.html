@@ -91,44 +91,58 @@ svg.edges { position: absolute; top: 0; left: 0; width: 1400px; height: 700px; p
 </div>
 
 <script>
-const nodes = [
-  { id: 'user', x: 80, y: 300, icon: '👤', name: 'User / Browser', detail: 'goldenjacketsbrazil.com\ngoldenjackets.pl', type: 'user', tooltip: 'End users accessing the community websites via browser.' },
-  { id: 'route53', x: 300, y: 300, icon: '🌐', name: 'Route 53', detail: 'DNS\n3 Hosted Zones', type: 'route53', tooltip: 'DNS resolution for goldenjacketsbrazil.com, goldenjackets.pl, goldenjacketacademy.com' },
-  { id: 'cf-br', x: 520, y: 200, icon: '⚡', name: 'CloudFront BR', detail: 'E3N4417EU5IQE6\nwww.goldenjacketsbrazil.com', type: 'cloudfront', tooltip: 'CDN distribution for Brazil chapter. Origin: S3 www bucket.' },
-  { id: 'cf-pl', x: 520, y: 400, icon: '⚡', name: 'CloudFront PL', detail: 'E174XK4PPCRG0L\ngoldenjackets.pl', type: 'cloudfront', tooltip: 'CDN distribution for Poland chapter. Origin: S3 Poland bucket.' },
-  { id: 's3-br', x: 740, y: 200, icon: '📦', name: 'S3 Brazil', detail: 'www.goldenjacketsbrazil.com\nAccount: 800712212925', type: 's3', tooltip: 'Static website hosting for Brazil. Deployed via GitHub Actions.' },
-  { id: 's3-pl', x: 740, y: 400, icon: '📦', name: 'S3 Poland', detail: 'goldenjackets.pl\nAccount: 800712212925', type: 's3', tooltip: 'Static website hosting for Poland. Deployed via GitHub Actions.' },
-  { id: 'github', x: 960, y: 100, icon: '🐙', name: 'GitHub', detail: 'goldenjackets-community\n4 repos', type: 'github', tooltip: 'Org: goldenjackets-community\nRepos: brazil, poland, academy, infra\nCI/CD: push → S3 → CloudFront invalidation → smoke test' },
-  { id: 'cognito', x: 960, y: 300, icon: '🔐', name: 'Cognito', detail: 'us-east-1_Z0VzzrmIX\nGroups: brazil, poland', type: 'cognito', tooltip: 'User Pool for Members Lounge authentication.\nGroups isolate chapters.\nGlobal admin: ricardo.gulias@darede.com.br' },
-  { id: 'lambda-admin', x: 960, y: 480, icon: '⚙️', name: 'Lambda gj-admin', detail: 'Users, Backup, Restore\nArticle Submit', type: 'lambda', tooltip: 'Admin panel API: list/create/delete users, backup status, restore, submit articles (creates PR + SNS).' },
-  { id: 'lambda-apply', x: 740, y: 580, icon: '⚙️', name: 'Lambda gj-apply', detail: 'Member Applications\nCreates PR + Card', type: 'lambda', tooltip: 'Processes apply form: creates branch, uploads photo, adds HTML card, opens PR, sends SNS notification.' },
-  { id: 'lambda-counter', x: 520, y: 580, icon: '⚙️', name: 'Lambda gj-counter', detail: 'Visitor Counter PL\nIndependent', type: 'lambda', tooltip: 'Independent visitor counter for Poland chapter. Separate DynamoDB table.' },
-  { id: 'dynamodb', x: 300, y: 580, icon: '🗄️', name: 'DynamoDB', detail: 'Visitor counters\nBR + PL tables', type: 'dynamodb', tooltip: 'Tables for visitor counters (Brazil + Poland independent).' },
-  { id: 'sns', x: 1180, y: 480, icon: '📧', name: 'SNS', detail: 'goldenjackets-alerts\nEmail notifications', type: 'sns', tooltip: 'Topic: goldenjackets-alerts\nSends email on new member applications and article submissions.' },
-  { id: 'backup-br', x: 1180, y: 200, icon: '💾', name: 'Backup BR', detail: 'gj-site-backups\nDaily, 7-day retention', type: 'backup', tooltip: 'AWS Backup vault for Brazil S3 bucket. Daily backups, 7-day retention, versioning enabled.' },
-  { id: 'backup-pl', x: 1180, y: 350, icon: '💾', name: 'Backup PL', detail: 'gj-poland-backups\nDaily, 7-day retention', type: 'backup', tooltip: 'AWS Backup vault for Poland S3 bucket. Daily backups, 7-day retention, versioning enabled.' },
-];
+let nodes = [];
+let edges = [];
 
-const edges = [
-  { from: 'user', to: 'route53', color: '#FFD700' },
-  { from: 'route53', to: 'cf-br', color: '#8b5cf6' },
-  { from: 'route53', to: 'cf-pl', color: '#8b5cf6' },
-  { from: 'cf-br', to: 's3-br', color: '#3ecf8e' },
-  { from: 'cf-pl', to: 's3-pl', color: '#3ecf8e' },
-  { from: 'github', to: 's3-br', color: '#e0e0e0' },
-  { from: 'github', to: 's3-pl', color: '#e0e0e0' },
-  { from: 'user', to: 'cognito', color: '#ef4444' },
-  { from: 'cognito', to: 'lambda-admin', color: '#f90' },
-  { from: 'lambda-apply', to: 'github', color: '#e0e0e0' },
-  { from: 'lambda-apply', to: 'sns', color: '#ec4899' },
-  { from: 'lambda-admin', to: 'sns', color: '#ec4899' },
-  { from: 'lambda-admin', to: 'github', color: '#e0e0e0' },
-  { from: 'lambda-counter', to: 'dynamodb', color: '#3b82f6' },
-  { from: 's3-br', to: 'backup-br', color: '#14b8a6' },
-  { from: 's3-pl', to: 'backup-pl', color: '#14b8a6' },
-  { from: 'user', to: 'lambda-apply', color: '#f90' },
-  { from: 'user', to: 'lambda-counter', color: '#f90' },
-];
+// Fetch live data
+async function loadArchitecture() {
+  try {
+    const resp = await fetch('/architecture-data.json?t=' + Date.now());
+    const data = await resp.json();
+    nodes = data.nodes;
+    edges = data.edges;
+    render();
+  } catch(e) {
+    // Fallback to static if JSON not available yet
+    nodes = [
+      { id: 'user', x: 80, y: 300, icon: '👤', name: 'User / Browser', detail: 'goldenjacketsbrazil.com\ngoldenjackets.pl', type: 'user', tooltip: 'End users accessing the community websites.' },
+      { id: 'route53', x: 300, y: 300, icon: '🌐', name: 'Route 53', detail: 'DNS\n3 Hosted Zones', type: 'route53', tooltip: 'DNS for goldenjacketsbrazil.com, goldenjackets.pl, goldenjacketacademy.com' },
+      { id: 'cf-br', x: 520, y: 200, icon: '⚡', name: 'CloudFront BR', detail: 'E3N4417EU5IQE6\nwww.goldenjacketsbrazil.com', type: 'cloudfront', tooltip: 'CDN for Brazil chapter.' },
+      { id: 'cf-pl', x: 520, y: 400, icon: '⚡', name: 'CloudFront PL', detail: 'E174XK4PPCRG0L\ngoldenjackets.pl', type: 'cloudfront', tooltip: 'CDN for Poland chapter.' },
+      { id: 's3-br', x: 740, y: 200, icon: '📦', name: 'S3 Brazil', detail: 'www.goldenjacketsbrazil.com', type: 's3', tooltip: 'Static hosting for Brazil.' },
+      { id: 's3-pl', x: 740, y: 400, icon: '📦', name: 'S3 Poland', detail: 'goldenjackets.pl', type: 's3', tooltip: 'Static hosting for Poland.' },
+      { id: 'github', x: 960, y: 100, icon: '🐙', name: 'GitHub', detail: 'goldenjackets-community\n4 repos', type: 'github', tooltip: 'CI/CD: push → S3 → CloudFront' },
+      { id: 'cognito', x: 960, y: 300, icon: '🔐', name: 'Cognito', detail: 'us-east-1_Z0VzzrmIX\nGroups: brazil, poland', type: 'cognito', tooltip: 'Auth for Members Lounge.' },
+      { id: 'lambda-admin', x: 960, y: 480, icon: '⚙️', name: 'Lambda gj-admin', detail: 'Users, Backup, Articles', type: 'lambda', tooltip: 'Admin panel API.' },
+      { id: 'lambda-apply', x: 740, y: 580, icon: '⚙️', name: 'Lambda gj-apply', detail: 'Member Applications', type: 'lambda', tooltip: 'Creates PR + card.' },
+      { id: 'lambda-counter', x: 520, y: 580, icon: '⚙️', name: 'Lambda gj-counter', detail: 'Visitor Counter PL', type: 'lambda', tooltip: 'Independent counter.' },
+      { id: 'dynamodb', x: 300, y: 580, icon: '🗄️', name: 'DynamoDB', detail: 'Visitor counters', type: 'dynamodb', tooltip: 'BR + PL tables.' },
+      { id: 'sns', x: 1180, y: 480, icon: '📧', name: 'SNS', detail: 'goldenjackets-alerts', type: 'sns', tooltip: 'Email notifications.' },
+      { id: 'backup', x: 1180, y: 250, icon: '💾', name: 'Backup', detail: 'gj-site-backups\ngj-poland-backups', type: 'backup', tooltip: 'Daily, 7-day retention.' },
+    ];
+    edges = [
+      { from: 'user', to: 'route53', color: '#FFD700' },
+      { from: 'route53', to: 'cf-br', color: '#8b5cf6' },
+      { from: 'route53', to: 'cf-pl', color: '#8b5cf6' },
+      { from: 'cf-br', to: 's3-br', color: '#3ecf8e' },
+      { from: 'cf-pl', to: 's3-pl', color: '#3ecf8e' },
+      { from: 'github', to: 's3-br', color: '#e0e0e0' },
+      { from: 'github', to: 's3-pl', color: '#e0e0e0' },
+      { from: 'user', to: 'cognito', color: '#ef4444' },
+      { from: 'cognito', to: 'lambda-admin', color: '#f90' },
+      { from: 'lambda-apply', to: 'github', color: '#e0e0e0' },
+      { from: 'lambda-apply', to: 'sns', color: '#ec4899' },
+      { from: 'lambda-admin', to: 'sns', color: '#ec4899' },
+      { from: 'lambda-admin', to: 'github', color: '#e0e0e0' },
+      { from: 'lambda-counter', to: 'dynamodb', color: '#3b82f6' },
+      { from: 's3-br', to: 'backup', color: '#14b8a6' },
+      { from: 's3-pl', to: 'backup', color: '#14b8a6' },
+      { from: 'user', to: 'lambda-apply', color: '#f90' },
+      { from: 'user', to: 'lambda-counter', color: '#f90' },
+    ];
+    render();
+  }
+}
 
 // Render
 const canvasInner = document.getElementById('canvasInner');
@@ -196,7 +210,7 @@ canvas.addEventListener('mouseup', () => dragging = false);
 canvas.addEventListener('mouseleave', () => dragging = false);
 canvas.addEventListener('wheel', e => { e.preventDefault(); e.deltaY < 0 ? zoomIn() : zoomOut(); });
 
-render();
+loadArchitecture();
 </script>
 </body>
 </html>
