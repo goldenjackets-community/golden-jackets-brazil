@@ -140,6 +140,20 @@
             <p id="jobMsg" style="margin-top:6px;font-size:0.8em;"></p>
           </div>
         </div>
+        <div class="card" id="sec-article">
+          <span class="badge">Content</span>
+          <h3>📝 Submit Article</h3>
+          <p>Share your technical content with the community. Articles will be reviewed and published on our website.</p>
+          <br>
+          <div id="articleForm">
+            <input type="text" id="artTitle" placeholder="Article title" style="width:100%;padding:10px;margin-bottom:8px;background:#151528;border:1px solid #2a2a45;border-radius:6px;color:#e0e0e0;font-family:inherit;">
+            <input type="url" id="artUrl" placeholder="Article URL (community.aws, dev.to, etc)" style="width:100%;padding:10px;margin-bottom:8px;background:#151528;border:1px solid #2a2a45;border-radius:6px;color:#e0e0e0;font-family:inherit;">
+            <input type="text" id="artSummary" placeholder="Short summary (1-2 sentences)" style="width:100%;padding:10px;margin-bottom:8px;background:#151528;border:1px solid #2a2a45;border-radius:6px;color:#e0e0e0;font-family:inherit;">
+            <button onclick="submitArticle()" style="width:100%;padding:10px;background:linear-gradient(135deg,#FFD700,#B8860B);border:none;border-radius:6px;color:#151528;font-weight:700;cursor:pointer;">Submit for Review</button>
+            <p id="artMsg" style="margin-top:8px;font-size:0.85em;"></p>
+          </div>
+        </div>
+
         <div class="card" id="sec-discord">
           <span class="badge">Community</span>
           <h3>💬 Discord Server</h3>
@@ -154,20 +168,6 @@
           <p>Curated study materials, exam tips, and strategies shared by our members to help the community grow.</p>
           <br>
           <a href="#">Coming soon →</a>
-        </div>
-
-        <div class="card" id="sec-article">
-          <span class="badge">Content</span>
-          <h3>📝 Submit Article</h3>
-          <p>Share your technical content with the community. Articles will be reviewed and published on our website.</p>
-          <br>
-          <div id="articleForm">
-            <input type="text" id="artTitle" placeholder="Article title" style="width:100%;padding:10px;margin-bottom:8px;background:#151528;border:1px solid #2a2a45;border-radius:6px;color:#e0e0e0;font-family:inherit;">
-            <input type="url" id="artUrl" placeholder="Article URL (community.aws, dev.to, etc)" style="width:100%;padding:10px;margin-bottom:8px;background:#151528;border:1px solid #2a2a45;border-radius:6px;color:#e0e0e0;font-family:inherit;">
-            <input type="text" id="artSummary" placeholder="Short summary (1-2 sentences)" style="width:100%;padding:10px;margin-bottom:8px;background:#151528;border:1px solid #2a2a45;border-radius:6px;color:#e0e0e0;font-family:inherit;">
-            <button onclick="submitArticle()" style="width:100%;padding:10px;background:linear-gradient(135deg,#FFD700,#B8860B);border:none;border-radius:6px;color:#151528;font-weight:700;cursor:pointer;">Submit for Review</button>
-            <p id="artMsg" style="margin-top:8px;font-size:0.85em;"></p>
-          </div>
         </div>
 
         <div class="card" id="sec-events">
