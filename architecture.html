@@ -14,7 +14,7 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: #0f0f1a; col
 .header a:hover { color: #FFD700; }
 .canvas { width: 100%; height: 100%; position: relative; overflow: hidden; cursor: grab; }
 .canvas:active { cursor: grabbing; }
-.canvas-inner { position: absolute; transform-origin: 0 0; transition: transform 0.1s ease-out; }
+.canvas-inner { position: absolute; width: 1400px; height: 700px; transform-origin: 0 0; }
 .node { position: absolute; background: #1a1a30; border: 1px solid #2a2a45; border-radius: 12px; padding: 14px 18px; min-width: 160px; text-align: center; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
 .node:hover { border-color: rgba(255,215,0,0.5); box-shadow: 0 0 20px rgba(255,215,0,0.15); transform: translateY(-2px); }
 .node .icon { font-size: 1.8em; margin-bottom: 6px; }
@@ -40,7 +40,7 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: #0f0f1a; col
 .node.route53 .name { color: #a855f7; }
 .node.user { border-color: #FFD700; }
 .node.user .name { color: #FFD700; }
-svg.edges { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+svg.edges { position: absolute; top: 0; left: 0; width: 1400px; height: 700px; pointer-events: none; }
 .edge { stroke-width: 1.5; fill: none; opacity: 0.6; }
 .edge-animated { stroke-dasharray: 8 4; animation: flow 1.5s linear infinite; }
 @keyframes flow { to { stroke-dashoffset: -24; } }
@@ -62,8 +62,9 @@ svg.edges { position: absolute; top: 0; left: 0; width: 100%; height: 100%; poin
 </div>
 
 <div class="canvas" id="canvas">
-  <svg class="edges" id="edges"></svg>
-  <div class="canvas-inner" id="canvasInner"></div>
+  <div class="canvas-inner" id="canvasInner">
+    <svg class="edges" id="edges"></svg>
+  </div>
 </div>
 
 <div class="legend">
@@ -180,7 +181,6 @@ function hideTooltip() { tooltip.style.display = 'none'; }
 
 function updateTransform() {
   canvasInner.style.transform = `translate(${panX}px,${panY}px) scale(${scale})`;
-  edgesSvg.style.transform = `translate(${panX}px,${panY}px) scale(${scale})`;
 }
 
 function zoomIn() { scale = Math.min(scale + 0.15, 2); updateTransform(); }
