@@ -48,11 +48,7 @@
 
 - [ ] Accenture sponsor (Carvalheira → Guilherme, media kit enviado)
 - [ ] Ka Solution sponsor (Paulo Rodovalho, media kit enviado)
-- [ ] AWS Ambassador (João Helena helping)
 - [ ] AWS Hero nomination path
-- [ ] AAI certification (Omar/Getec — nome apresentado à AWS)
-- [ ] NetApp Champion activities (JBP, Invoice 834348, call 19/05)
-- [ ] GenAI Pro exam (30/05)
 - [ ] Podcast/Lives calendar (form collecting responses)
 
 ## 🌍 International Expansion
@@ -87,4 +83,3 @@
 - [ ] Architecture: make Lambda discovery fully dynamic (API Gateway auto-detect)
 - [ ] Post LinkedIn: perks exclusivos (draft pronto)
 - [ ] Post LinkedIn: artigo onboarding (draft pronto)
-- [ ] Documentação estratégica NetApp (draft até 19-20/05)
