@@ -63,7 +63,7 @@ svg.edges { position: absolute; top: 0; left: 0; width: 1400px; height: 700px; p
 
 <div class="canvas" id="canvas">
   <div class="canvas-inner" id="canvasInner">
-    <svg class="edges" id="edges"></svg>
+    <svg class="edges" id="edges" width="1400" height="700"></svg>
   </div>
 </div>
 
@@ -138,7 +138,8 @@ let scale = 0.85, panX = 50, panY = 60;
 let dragging = false, startX, startY;
 
 function render() {
-  canvasInner.innerHTML = '';
+  // Remove old nodes (keep SVG)
+  canvasInner.querySelectorAll('.node').forEach(n => n.remove());
   nodes.forEach(n => {
     const el = document.createElement('div');
     el.className = `node ${n.type}`;
