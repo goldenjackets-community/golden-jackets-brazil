@@ -420,10 +420,11 @@ async function submitArticle() {
   msg.innerHTML = '<span style="color:#FFD700">Submitting...</span>';
   var author = sessionStorage.getItem('gj_email') || 'unknown';
   try {
-    var resp = await fetch('https://kqiq2bltjd.execute-api.us-east-1.amazonaws.com/article', {
+    var resp = await fetch(GJ_CONFIG.ADMIN_API, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json', 'Authorization': sessionStorage.getItem('gj_token')},
       body: JSON.stringify({
+        action: 'submit-article',
         title: title,
         url: url,
         summary: summary,
