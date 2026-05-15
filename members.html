@@ -123,6 +123,23 @@
         <h1>🏆 Members Lounge</h1>
         <p class="subtitle">Welcome, Golden Jacket! This area is exclusive to verified members.</p>
 
+        <div class="card" id="sec-jobs">
+          <span class="badge">Jobs</span>
+          <h3>💼 Job Board</h3>
+          <p>Exclusive opportunities shared by Golden Jacket members.</p>
+          <br>
+          <div id="jobsList" style="max-height:200px;overflow-y:auto;margin-bottom:12px;font-size:0.85em;"></div>
+          <button onclick="document.getElementById('jobForm').style.display='block'" style="width:100%;padding:10px;background:linear-gradient(135deg,#FFD700,#B8860B);border:none;border-radius:6px;color:#151528;font-weight:700;cursor:pointer;">+ Post a Job</button>
+          <div id="jobForm" style="display:none;margin-top:12px;">
+            <input type="text" id="jobCompany" placeholder="Company" style="width:100%;padding:8px;margin-bottom:6px;background:#151528;border:1px solid #2a2a45;border-radius:6px;color:#e0e0e0;">
+            <input type="text" id="jobRole" placeholder="Role / Position" style="width:100%;padding:8px;margin-bottom:6px;background:#151528;border:1px solid #2a2a45;border-radius:6px;color:#e0e0e0;">
+            <input type="text" id="jobLocation" placeholder="Location (Remote, SP, etc)" style="width:100%;padding:8px;margin-bottom:6px;background:#151528;border:1px solid #2a2a45;border-radius:6px;color:#e0e0e0;">
+            <input type="url" id="jobLink" placeholder="Link (LinkedIn, site, etc)" style="width:100%;padding:8px;margin-bottom:6px;background:#151528;border:1px solid #2a2a45;border-radius:6px;color:#e0e0e0;">
+            <input type="text" id="jobContact" placeholder="Contact (email or LinkedIn)" style="width:100%;padding:8px;margin-bottom:6px;background:#151528;border:1px solid #2a2a45;border-radius:6px;color:#e0e0e0;">
+            <button onclick="postJob()" style="width:100%;padding:10px;background:#3ecf8e;border:none;border-radius:6px;color:#151528;font-weight:700;cursor:pointer;">Submit</button>
+            <p id="jobMsg" style="margin-top:6px;font-size:0.8em;"></p>
+          </div>
+        </div>
         <div class="card" id="sec-discord">
           <span class="badge">Community</span>
           <h3>💬 Discord Server</h3>
@@ -161,23 +178,6 @@
           <a href="#">Coming soon →</a>
         </div>
 
-        <div class="card" id="sec-jobs">
-          <span class="badge">Jobs</span>
-          <h3>💼 Job Board</h3>
-          <p>Exclusive opportunities shared by Golden Jacket members.</p>
-          <br>
-          <div id="jobsList" style="max-height:200px;overflow-y:auto;margin-bottom:12px;font-size:0.85em;"></div>
-          <button onclick="document.getElementById('jobForm').style.display='block'" style="width:100%;padding:10px;background:linear-gradient(135deg,#FFD700,#B8860B);border:none;border-radius:6px;color:#151528;font-weight:700;cursor:pointer;">+ Post a Job</button>
-          <div id="jobForm" style="display:none;margin-top:12px;">
-            <input type="text" id="jobCompany" placeholder="Company" style="width:100%;padding:8px;margin-bottom:6px;background:#151528;border:1px solid #2a2a45;border-radius:6px;color:#e0e0e0;">
-            <input type="text" id="jobRole" placeholder="Role / Position" style="width:100%;padding:8px;margin-bottom:6px;background:#151528;border:1px solid #2a2a45;border-radius:6px;color:#e0e0e0;">
-            <input type="text" id="jobLocation" placeholder="Location (Remote, SP, etc)" style="width:100%;padding:8px;margin-bottom:6px;background:#151528;border:1px solid #2a2a45;border-radius:6px;color:#e0e0e0;">
-            <input type="url" id="jobLink" placeholder="Link (LinkedIn, site, etc)" style="width:100%;padding:8px;margin-bottom:6px;background:#151528;border:1px solid #2a2a45;border-radius:6px;color:#e0e0e0;">
-            <input type="text" id="jobContact" placeholder="Contact (email or LinkedIn)" style="width:100%;padding:8px;margin-bottom:6px;background:#151528;border:1px solid #2a2a45;border-radius:6px;color:#e0e0e0;">
-            <button onclick="postJob()" style="width:100%;padding:10px;background:#3ecf8e;border:none;border-radius:6px;color:#151528;font-weight:700;cursor:pointer;">Submit</button>
-            <p id="jobMsg" style="margin-top:6px;font-size:0.8em;"></p>
-          </div>
-        </div>
 
         <div class="card" id="sec-brand">
           <span class="badge">Brand</span>
