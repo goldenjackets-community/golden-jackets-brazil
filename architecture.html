@@ -151,6 +151,8 @@ const canvasInner = document.getElementById('canvasInner');
 const edgesSvg = document.getElementById('edges');
 const tooltip = document.getElementById('tooltip');
 let scale = 0.85, panX = 50, panY = 60;
+const savedView = JSON.parse(localStorage.getItem('gj-arch-view') || 'null');
+if (savedView) { scale = savedView.scale; panX = savedView.panX; panY = savedView.panY; }
 let dragging = false, startX, startY;
 
 function render() {
@@ -264,11 +266,12 @@ function hideTooltip() { tooltip.style.display = 'none'; }
 
 function updateTransform() {
   canvasInner.style.transform = `translate(${panX}px,${panY}px) scale(${scale})`;
+  localStorage.setItem('gj-arch-view', JSON.stringify({panX, panY, scale}));
 }
 
 function zoomIn() { scale = Math.min(scale + 0.15, 2); updateTransform(); }
 function zoomOut() { scale = Math.max(scale - 0.15, 0.3); updateTransform(); }
-function resetView() { scale = 0.85; panX = 50; panY = 60; updateTransform(); }
+function resetView() { scale = 0.85; panX = 50; panY = 60; localStorage.removeItem('gj-arch-view'); updateTransform(); }
 function resetPositions() { localStorage.removeItem('gj-arch-positions'); loadArchitecture(); }
 
 // Pan
