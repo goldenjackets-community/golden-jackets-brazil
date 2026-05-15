@@ -43,7 +43,8 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: #0f0f1a; col
 svg.edges { position: absolute; top: 0; left: 0; width: 1400px; height: 700px; pointer-events: none; }
 .edge { stroke-width: 1.5; fill: none; opacity: 0.6; }
 .edge-animated { stroke-dasharray: 8 4; animation: flow 1.5s linear infinite; }
-@keyframes flow { to { stroke-dashoffset: -24; } }
+.node.alarm-active { border-color: #ef4444 !important; animation: pulse-alarm 1s infinite; box-shadow: 0 0 20px rgba(239,68,68,0.5) !important; }
+@keyframes pulse-alarm { 0%,100% { box-shadow: 0 0 10px rgba(239,68,68,0.3); } 50% { box-shadow: 0 0 30px rgba(239,68,68,0.8); } }
 .legend { position: fixed; bottom: 20px; left: 20px; background: rgba(26,26,48,0.95); border: 1px solid #2a2a45; border-radius: 10px; padding: 14px 18px; font-size: 0.7em; z-index: 100; }
 .legend-item { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
 .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
@@ -165,10 +166,16 @@ function render() {
 
     const el = document.createElement('div');
     el.className = `node ${n.type}`;
+    if (n.alarm === 'ALARM') el.className += ' alarm-active';
     el.style.left = n.x + 'px';
     el.style.top = n.y + 'px';
     el.dataset.id = n.id;
-    el.innerHTML = `<div class="icon">${n.icon}</div><div class="name">${n.name}</div><div class="detail">${n.detail.replace(/\n/g,'<br>')}</div>`;
+    let html = `<div class="icon">${n.icon}</div><div class="name">${n.name}</div><div class="detail">${n.detail.replace(/\n/g,'<br>')}</div>`;
+    if (n.alarm === 'ALARM') {
+      const logUrl = `https://us-east-1.console.aws.amazon.com/cloudwatch/home?region=us-east-1#logsV2:log-groups/log-group/$252Faws$252Flambda$252F${n.id.replace('lambda-','')}`;
+      html += `<a href="${logUrl}" target="_blank" style="display:block;margin-top:6px;font-size:0.65em;color:#ef4444;text-decoration:underline;">View Logs →</a>`;
+    }
+    el.innerHTML = html;
     el.addEventListener('mouseenter', e => showTooltip(e, n));
     el.addEventListener('mouseleave', hideTooltip);
 
