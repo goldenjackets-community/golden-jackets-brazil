@@ -16,19 +16,56 @@
 - [x] 1K LinkedIn followers milestone
 - [x] Podcast EP01 live (YouTube + Spotify)
 - [x] Partnerships: Tutorials Dojo, Sundog Education
-- [x] 34 Golden Jackets + 3 Alumni + 7 Challengers
+- [x] 34 Golden Jackets + 3 Alumni + 8 Challengers
 - [x] Sponsor form with tiers (Founding → Bronze)
 - [x] All Chapters button (global admin only)
 - [x] No AWS console needed for admin operations
 - [x] Lambda gj-apply in infra repo (GitHub deploys)
 - [x] Lambda gj-admin in infra repo (GitHub deploys)
 - [x] Leticia Albuquerque added (Challenger 10/12, CB Cloud Ops, Speaker)
+- [x] Lucas Jahchan added (Challenger #8, SP)
+- [x] Fix gj-apply Lambda (sha 422 error on photo upload)
+- [x] Article submit creates PR + SNS notification
+- [x] Member tags: role-cb, role-speaker (Wagner, Luiz Ribeiro, Leticia, Ricardo, Erick)
+- [x] Media Kit updated (1100+ followers, 2 chapters, expansion info)
+- [x] Live Architecture diagram (interactive, zoom/pan/drag, tooltips)
+- [x] Architecture: Lambda discovers resources via AWS APIs (real-time)
+- [x] Architecture: CloudWatch Alarms on critical Lambdas ($0.30/mês)
+- [x] Architecture: Pulse red animation on alarm + View Logs link
+- [x] Architecture: Drag-and-fix nodes + save pan/zoom position
+- [x] Architecture: View → deep link to AWS Console for all services
+- [x] Perks/cupons distributed (Tutorials Dojo + Sundog Education)
+- [x] Google Form: Podcast & Lives planning (5 responses)
+- [x] Knowledge base: 30+ items indexed
 
 ## 🔄 In Progress
 
-- [ ] LATAM expansion (Argentina — Carlos connecting)
-- [ ] AWS Community Builder waitlist submitted
-- [ ] NetApp Champion activities (Battlecard, JBP, Invoice 834348)
+- [ ] Accenture sponsor (Carvalheira → Guilherme, media kit enviado)
+- [ ] Ka Solution sponsor (Paulo Rodovalho, media kit enviado)
+- [ ] AWS Ambassador (João Helena helping)
+- [ ] AWS Hero nomination path
+- [ ] AAI certification (Omar/Getec — nome apresentado à AWS)
+- [ ] NetApp Champion activities (JBP, Invoice 834348, call 19/05)
+- [ ] GenAI Pro exam (30/05)
+- [ ] Podcast/Lives calendar (form collecting responses)
+
+## 🌍 International Expansion
+
+| País | Quem | Status |
+|------|------|--------|
+| 🇵🇱 Polônia | Dawid Drabek | ✅ Ativo |
+| 🇬🇧 UK | Daniel Gaina | ✅ Confirmou |
+| 🇺🇸 EUA | Noor Sabahi | ✅ Confirmou (call pendente) |
+| 🇺🇸 EUA | Jenn Bergstrom | ✅ Founding Member |
+| 🇨🇦 Canadá | Kelvin Igbineweka | Aguardando |
+| 🇩🇪 Alemanha | Eric Schüler | Aguardando |
+| 🇫🇷 França | Mohamed BENALI | Aguardando |
+| 🇦🇺 Austrália | John Marshall | Aguardando |
+| 🇯🇵 Japão | Daisuke Watarai | Aguardando |
+| 🇵🇪 Peru | Cristhian Becerra | Aguardando |
+| 🇨🇱 Chile | Gonzalo Munoz | Aguardando |
+| 🇪🇸 Espanha | Jesús Alcoba | Aguardando |
+| 🇵🇭 Filipinas | (abordado) | Aguardando |
 
 ## 📋 To Do
 
@@ -36,7 +73,10 @@
 - [ ] Reach 2,000 LinkedIn followers
 - [ ] AWS Summit SP meetup (Sep 2026)
 - [ ] First live/webinar
-- [ ] Identify Philippines chapter lead
-- [ ] AAI certification (Getec)
-- [ ] AWS Hero nomination path
+- [ ] Convidar Geries pro podcast (quando tiver 4-5 chapters)
 - [ ] Separate visitor counter per chapter (BR independent)
+- [ ] Admin tool: self-service tag editing for members
+- [ ] Architecture: make Lambda discovery fully dynamic (API Gateway auto-detect)
+- [ ] Post LinkedIn: perks exclusivos (draft pronto)
+- [ ] Post LinkedIn: artigo onboarding (draft pronto)
+- [ ] Documentação estratégica NetApp (draft até 19-20/05)
