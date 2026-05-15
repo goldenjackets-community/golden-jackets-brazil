@@ -26,8 +26,8 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: #0f0f1a; col
 .node.s3 .name { color: #3ecf8e; }
 .node.cloudfront { border-color: #8b5cf6; }
 .node.cloudfront .name { color: #8b5cf6; }
-.node.cognito { border-color: #ef4444; }
-.node.cognito .name { color: #ef4444; }
+.node.cognito { border-color: #a855f7; }
+.node.cognito .name { color: #a855f7; }
 .node.dynamodb { border-color: #3b82f6; }
 .node.dynamodb .name { color: #3b82f6; }
 .node.github { border-color: #e0e0e0; }
@@ -43,8 +43,8 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: #0f0f1a; col
 svg.edges { position: absolute; top: 0; left: 0; width: 1400px; height: 700px; pointer-events: none; }
 .edge { stroke-width: 1.5; fill: none; opacity: 0.6; }
 .edge-animated { stroke-dasharray: 8 4; animation: flow 1.5s linear infinite; }
-.node.alarm-active { border-color: #ef4444 !important; animation: pulse-alarm 1s infinite; box-shadow: 0 0 20px rgba(239,68,68,0.5) !important; }
-@keyframes pulse-alarm { 0%,100% { box-shadow: 0 0 10px rgba(239,68,68,0.3); } 50% { box-shadow: 0 0 30px rgba(239,68,68,0.8); } }
+.node.alarm-active { border-color: #ef4444 !important; animation: pulse-alarm 0.5s infinite; box-shadow: 0 0 30px rgba(239,68,68,0.8) !important; background: rgba(239,68,68,0.15) !important; }
+@keyframes pulse-alarm { 0%,100% { box-shadow: 0 0 15px rgba(239,68,68,0.4); transform: scale(1); } 50% { box-shadow: 0 0 40px rgba(239,68,68,1); transform: scale(1.05); } }
 .legend { position: fixed; bottom: 20px; left: 20px; background: rgba(26,26,48,0.95); border: 1px solid #2a2a45; border-radius: 10px; padding: 14px 18px; font-size: 0.7em; z-index: 100; }
 .legend-item { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
 .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
@@ -171,9 +171,11 @@ function render() {
     el.style.top = n.y + 'px';
     el.dataset.id = n.id;
     let html = `<div class="icon">${n.icon}</div><div class="name">${n.name}</div><div class="detail">${n.detail.replace(/\n/g,'<br>')}</div>`;
-    if (n.alarm === 'ALARM') {
-      const logUrl = `https://us-east-1.console.aws.amazon.com/cloudwatch/home?region=us-east-1#logsV2:log-groups/log-group/$252Faws$252Flambda$252F${n.id.replace('lambda-','')}`;
-      html += `<a href="${logUrl}" target="_blank" style="display:block;margin-top:6px;font-size:0.65em;color:#ef4444;text-decoration:underline;">View Logs →</a>`;
+    if (n.id && n.id.startsWith('lambda-')) {
+      const funcName = n.id.replace('lambda-','');
+      const logUrl = `https://us-east-1.console.aws.amazon.com/cloudwatch/home?region=us-east-1#logsV2:log-groups/log-group/$252Faws$252Flambda$252F${funcName}`;
+      const color = n.alarm === 'ALARM' ? '#ef4444' : '#888';
+      html += `<a href="${logUrl}" target="_blank" style="display:block;margin-top:6px;font-size:0.65em;color:${color};text-decoration:underline;">📋 View Logs →</a>`;
     }
     el.innerHTML = html;
     el.addEventListener('mouseenter', e => showTooltip(e, n));
