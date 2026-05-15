@@ -135,7 +135,7 @@
             <input type="text" id="jobRole" placeholder="Role / Position" style="width:100%;padding:8px;margin-bottom:6px;background:#151528;border:1px solid #2a2a45;border-radius:6px;color:#e0e0e0;">
             <input type="text" id="jobLocation" placeholder="Location (Remote, SP, etc)" style="width:100%;padding:8px;margin-bottom:6px;background:#151528;border:1px solid #2a2a45;border-radius:6px;color:#e0e0e0;">
             <input type="url" id="jobLink" placeholder="Link (LinkedIn, site, etc)" style="width:100%;padding:8px;margin-bottom:6px;background:#151528;border:1px solid #2a2a45;border-radius:6px;color:#e0e0e0;">
-            <input type="text" id="jobContact" placeholder="Contact (email or LinkedIn)" style="width:100%;padding:8px;margin-bottom:6px;background:#151528;border:1px solid #2a2a45;border-radius:6px;color:#e0e0e0;">
+            <input type="text" id="jobContact" placeholder="Your LinkedIn URL (for connections)" style="width:100%;padding:8px;margin-bottom:6px;background:#151528;border:1px solid #2a2a45;border-radius:6px;color:#e0e0e0;">
             <button onclick="postJob()" style="width:100%;padding:10px;background:#3ecf8e;border:none;border-radius:6px;color:#151528;font-weight:700;cursor:pointer;">Submit</button>
             <p id="jobMsg" style="margin-top:6px;font-size:0.8em;"></p>
           </div>
@@ -668,7 +668,7 @@ async function loadJobs() {
     var data = await resp.json();
     var list = document.getElementById('jobsList');
     if (!data.jobs || data.jobs.length === 0) { list.innerHTML = '<p style="color:#666;">No jobs posted yet.</p>'; return; }
-    list.innerHTML = data.jobs.map(j => `<div style="border-bottom:1px solid #2a2a45;padding:8px 0;"><strong style="color:#FFD700;">${j.role}</strong> @ ${j.company}<br><span style="color:#888;font-size:0.8em;">${j.location} · ${j.contact}</span>${j.link ? ` · <a href="${j.link}" target="_blank" style="color:#3ecf8e;">Apply →</a>` : ''}</div>`).join('');
+    list.innerHTML = data.jobs.map(j => `<div style="border-bottom:1px solid #2a2a45;padding:8px 0;"><strong style="color:#FFD700;">${j.role}</strong> @ ${j.company}<br><span style="color:#888;font-size:0.8em;">${j.location}</span>${j.link ? ` · <a href="${j.link}" target="_blank" style="color:#3ecf8e;">Apply →</a>` : ''}${j.contact ? ` · <a href="${j.contact.startsWith('http') ? j.contact : 'mailto:'+j.contact}" target="_blank" style="color:#a855f7;">Connect with poster →</a>` : ''}<br><span style="color:#555;font-size:0.7em;">Posted by ${j.posted_by}</span></div>`).join('');
   } catch(e) {}
 }
 async function postJob() {
