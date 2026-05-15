@@ -83,6 +83,7 @@ svg.edges { position: absolute; top: 0; left: 0; width: 1400px; height: 700px; p
   <button onclick="zoomIn()">+</button>
   <button onclick="zoomOut()">−</button>
   <button onclick="resetView()">⟲</button>
+  <button onclick="resetPositions()" title="Reset node positions">📌</button>
 </div>
 
 <div class="tooltip" id="tooltip">
@@ -154,19 +155,55 @@ let dragging = false, startX, startY;
 function render() {
   // Remove old nodes (keep SVG)
   canvasInner.querySelectorAll('.node').forEach(n => n.remove());
+
+  // Load saved positions
+  const saved = JSON.parse(localStorage.getItem('gj-arch-positions') || '{}');
+
   nodes.forEach(n => {
+    // Use saved position if exists
+    if (saved[n.id]) { n.x = saved[n.id].x; n.y = saved[n.id].y; }
+
     const el = document.createElement('div');
     el.className = `node ${n.type}`;
     el.style.left = n.x + 'px';
     el.style.top = n.y + 'px';
+    el.dataset.id = n.id;
     el.innerHTML = `<div class="icon">${n.icon}</div><div class="name">${n.name}</div><div class="detail">${n.detail.replace(/\n/g,'<br>')}</div>`;
     el.addEventListener('mouseenter', e => showTooltip(e, n));
     el.addEventListener('mouseleave', hideTooltip);
+
+    // Drag support
+    el.addEventListener('mousedown', e => {
+      e.stopPropagation();
+      dragNode = { el, node: n, startX: e.clientX - n.x * scale, startY: e.clientY - n.y * scale };
+    });
+
     canvasInner.appendChild(el);
   });
   renderEdges();
   updateTransform();
 }
+
+let dragNode = null;
+document.addEventListener('mousemove', e => {
+  if (!dragNode) return;
+  const nx = (e.clientX - dragNode.startX) / scale;
+  const ny = (e.clientY - dragNode.startY) / scale;
+  dragNode.node.x = nx;
+  dragNode.node.y = ny;
+  dragNode.el.style.left = nx + 'px';
+  dragNode.el.style.top = ny + 'px';
+  renderEdges();
+});
+document.addEventListener('mouseup', () => {
+  if (dragNode) {
+    // Save position
+    const saved = JSON.parse(localStorage.getItem('gj-arch-positions') || '{}');
+    saved[dragNode.node.id] = { x: dragNode.node.x, y: dragNode.node.y };
+    localStorage.setItem('gj-arch-positions', JSON.stringify(saved));
+    dragNode = null;
+  }
+});
 
 function renderEdges() {
   edgesSvg.innerHTML = '';
@@ -201,6 +238,7 @@ function updateTransform() {
 function zoomIn() { scale = Math.min(scale + 0.15, 2); updateTransform(); }
 function zoomOut() { scale = Math.max(scale - 0.15, 0.3); updateTransform(); }
 function resetView() { scale = 0.85; panX = 50; panY = 60; updateTransform(); }
+function resetPositions() { localStorage.removeItem('gj-arch-positions'); loadArchitecture(); }
 
 // Pan
 const canvas = document.getElementById('canvas');
