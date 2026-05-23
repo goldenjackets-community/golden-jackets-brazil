@@ -145,7 +145,7 @@
                   var lvlBg=(m.level==="Legend"||m.level==="Champion")?"rgba(255,215,0,0.15)":"rgba(76,175,80,0.15)";
                   html+="<div style='border-bottom:1px solid #2a2a45;padding:6px 0'>";
                   html+="<div style='display:flex;justify-content:space-between;align-items:center;cursor:pointer' data-email='"+m.email+"' onclick='toggleLB(this)'>";
-                  html+="<span><b style='color:"+colors[i]+"'>#"+(i+1)+"</b> "+m.name+"</span>";
+                  html+="<span><b style='color:"+colors[i]+"'>#"+(i+1)+"</b> "+m.name+" <a style=\x27color:#FFD700;font-size:0.7em;text-decoration:underline\x27>View contributions</a></span>";
                   html+="<span style='color:"+lvlColor+";font-weight:700'>"+m.points+" pts <span style='font-size:0.7em;background:"+lvlBg+";padding:2px 8px;border-radius:10px'>"+m.level+"</span></span>";
                   html+="</div><div class='lb-det' style='display:none;padding:6px 0 2px 20px;font-size:0.85em;color:#aaa'></div></div>";
                 });
