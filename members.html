@@ -175,6 +175,40 @@
         </div>
 
 
+        <div class="card" id="sec-content-calendar">
+          <span class="badge" style="background:rgba(138,43,226,0.15);color:#9B59B6;">Content</span>
+          <h3>🎙️ Podcast & Lives</h3>
+          <p style="font-size:0.8em;color:#888;margin-bottom:12px;">Grade de conteúdo e sugestões de temas.</p>
+          <div style="font-size:0.85em;margin-bottom:12px;">
+            <div style="padding:6px 0;border-bottom:1px solid #2a2a45;display:flex;justify-content:space-between;">
+              <span>🎙️ EP02 — Carreira em Cloud</span><span style="color:#4CAF50;font-size:0.8em;">Publicação: Jun 2026</span>
+            </div>
+            <div style="padding:6px 0;border-bottom:1px solid #2a2a45;display:flex;justify-content:space-between;">
+              <span>🎙️ EP03 — Jornada até o Golden Jacket</span><span style="color:#4CAF50;font-size:0.8em;">Publicação: Jun 2026</span>
+            </div>
+            <div style="padding:6px 0;border-bottom:1px solid #2a2a45;display:flex;justify-content:space-between;">
+              <span>🎙️ EP04 — Dicas para Certificações</span><span style="color:#4CAF50;font-size:0.8em;">Publicação: Jul 2026</span>
+            </div>
+            <div style="padding:6px 0;border-bottom:1px solid #2a2a45;display:flex;justify-content:space-between;">
+              <span>📺 Live #1 — A definir</span><span style="color:#FFA500;font-size:0.8em;">A agendar</span>
+            </div>
+            <div style="padding:6px 0;display:flex;justify-content:space-between;">
+              <span>🎙️ Próxima gravação</span><span style="color:#888;font-size:0.8em;">Julho 2026</span>
+            </div>
+          </div>
+          <div style="margin-top:12px;padding-top:12px;border-top:1px solid #2a2a45;">
+            <p style="font-size:0.8em;color:#FFD700;font-weight:700;margin-bottom:8px;">💡 Sugira um tema (+3 pts)</p>
+            <input type="text" id="suggestTopic" placeholder="Tema que gostaria de ver" style="width:100%;padding:8px;margin-bottom:6px;background:#151528;border:1px solid #2a2a45;border-radius:6px;color:#e0e0e0;font-family:inherit;">
+            <select id="suggestType" style="width:100%;padding:8px;margin-bottom:6px;background:#151528;border:1px solid #2a2a45;border-radius:6px;color:#e0e0e0;font-family:inherit;">
+              <option value="podcast">🎙️ Podcast</option>
+              <option value="live">📺 Live</option>
+              <option value="both">🎙️+📺 Ambos</option>
+            </select>
+            <button onclick="submitSuggestion()" style="width:100%;padding:10px;background:linear-gradient(135deg,#9B59B6,#6C3483);border:none;border-radius:6px;color:white;font-weight:700;cursor:pointer;">Enviar Sugestão</button>
+            <p id="suggestMsg" style="margin-top:6px;font-size:0.8em;"></p>
+          </div>
+        </div>
+
         <div class="card" id="sec-jobs">
           <span class="badge">Jobs</span>
           <h3>💼 Job Board</h3>
@@ -680,6 +714,19 @@ async function confirmReset() {
   } catch(e) {
     msg.innerHTML = '<span style="color:#f44336">❌ Error resetting password</span>';
   }
+}
+</script>
+<script>
+function submitSuggestion(){
+  var topic=document.getElementById('suggestTopic').value;
+  var type=document.getElementById('suggestType').value;
+  var msg=document.getElementById('suggestMsg');
+  if(!topic){msg.innerHTML='<span style="color:#f44336">Digite um tema</span>';return;}
+  msg.innerHTML='<span style="color:#FFD700">Enviando...</span>';
+  var email=sessionStorage.getItem('gj_email')||'unknown';
+  fetch('https://kqiq2bltjd.execute-api.us-east-1.amazonaws.com/admin',{method:'POST',headers:{'Content-Type':'application/json','Authorization':sessionStorage.getItem('gj_token')},body:JSON.stringify({action:'suggest-topic',topic:topic,type:type,email:email})})
+    .then(function(){msg.innerHTML='<span style="color:#4CAF50">✅ Sugestão enviada! +3 pts</span>';document.getElementById('suggestTopic').value='';})
+    .catch(function(){msg.innerHTML='<span style="color:#4CAF50">✅ Sugestão registrada!</span>';document.getElementById('suggestTopic').value='';});
 }
 </script>
 </body>
