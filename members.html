@@ -153,7 +153,7 @@
               }).catch(function(){document.getElementById("leaderboardList").innerHTML="<p style='color:#888'>Unable to load</p>";});
           }
           function toggleLB(el){
-            var d=el.nextElementSibling;
+            var d=el.closest('div[style]').parentElement.querySelector('.lb-det');
             if(d.style.display==="none"){
               d.style.display="block";
               if(!d.dataset.loaded){
