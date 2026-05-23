@@ -136,20 +136,32 @@
           <div id="leaderboardList" style="font-size:0.85em;min-height:100px;"></div>
           <script>
           function loadLeaderboard(){
+            var founders=["ricardo.gulias@goldenjacketsbrazil.com","erick.mancz@gmail.com","wagnermazevedo@gmail.com"];
             fetch("https://kqiq2bltjd.execute-api.us-east-1.amazonaws.com/leaderboard")
               .then(function(r){return r.json()}).then(function(data){
-                var colors=["#FFD700","#C0C0C0","#CD7F32","#888","#888","#888","#888","#888"];
-                var html="";
-                data.forEach(function(m,i){
-                  var lvlColor=(m.level==="Legend"||m.level==="Champion")?"#FFD700":"#4CAF50";
-                  var lvlBg=(m.level==="Legend"||m.level==="Champion")?"rgba(255,215,0,0.15)":"rgba(76,175,80,0.15)";
-                  html+="<div style='border-bottom:1px solid #2a2a45;padding:6px 0'>";
-                  html+="<div style='display:flex;justify-content:space-between;align-items:center;cursor:pointer' data-email='"+m.email+"' onclick='toggleLB(this)'>";
-                  html+="<span><b style='color:"+colors[i]+"'>#"+(i+1)+"</b> "+m.name+" <a style=\x27color:#FFD700;font-size:0.7em;text-decoration:underline\x27>View contributions</a></span>";
-                  html+="<span style='color:"+lvlColor+";font-weight:700'>"+m.points+" pts <span style='font-size:0.7em;background:"+lvlBg+";padding:2px 8px;border-radius:10px'>"+m.level+"</span></span>";
-                  html+="</div><div class='lb-det' style='display:none;padding:6px 0 2px 20px;font-size:0.85em;color:#aaa'></div></div>";
+                var fhtml="<div style=\x27margin-bottom:12px;padding:8px 12px;background:#151528;border-radius:8px\x27><span style=\x27color:#FFD700;font-size:0.8em;font-weight:700\x27>\ud83d\udc51 Founders</span><div style=\x27display:flex;gap:16px;margin-top:6px;flex-wrap:wrap\x27>";
+                var mhtml="";
+                var rank=1;
+                var colors=["#FFD700","#C0C0C0","#CD7F32","#888","#888","#888","#888","#888","#888","#888"];
+                data.forEach(function(m){
+                  if(founders.indexOf(m.email)>=0){
+                    fhtml+="<span style=\x27color:#e0e0e0;font-size:0.85em\x27>"+m.name+" <b style=\x27color:#FFD700\x27>"+m.points+"pts</b></span>";
+                  }else{
+                    var lvlColor=m.level==="Champion"?"#FFD700":"#4CAF50";
+                    var lvlBg=m.level==="Champion"?"rgba(255,215,0,0.15)":"rgba(76,175,80,0.15)";
+                    mhtml+="<div style=\x27border-bottom:1px solid #2a2a45;padding:6px 0\x27>";
+                    mhtml+="<div style=\x27display:flex;justify-content:space-between;align-items:center;cursor:pointer\x27 data-email=\x27"+m.email+"\x27 onclick=\x27toggleLB(this)\x27>";
+                    mhtml+="<span><b style=\x27color:"+colors[rank-1]+"\x27>#"+rank+"</b> "+m.name+" <a style=\x27color:#FFD700;font-size:0.7em;text-decoration:underline\x27>View contributions</a></span>";
+                    mhtml+="<span style=\x27color:"+lvlColor+";font-weight:700\x27>"+m.points+" pts <span style=\x27font-size:0.7em;background:"+lvlBg+";padding:2px 8px;border-radius:10px\x27>"+m.level+"</span></span>";
+                    mhtml+="</div><div class=\x27lb-det\x27 style=\x27display:none;padding:6px 0 2px 20px;font-size:0.85em;color:#aaa\x27></div></div>";
+                    rank++;
+                  }
                 });
-                document.getElementById("leaderboardList").innerHTML=html;
+                fhtml+="</div></div>";
+                var header="<p style=\x27color:#888;font-size:0.75em;margin-bottom:6px\x27>\ud83c\udfc6 Community Ranking</p>";
+                document.getElementById("leaderboardList").innerHTML=fhtml+header+mhtml;
+              }).catch(function(){document.getElementById("leaderboardList").innerHTML="<p style=\x27color:#888\x27>Unable to load</p>";});
+          }
               }).catch(function(){document.getElementById("leaderboardList").innerHTML="<p style='color:#888'>Unable to load</p>";});
           }
           function toggleLB(el){
