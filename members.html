@@ -135,33 +135,21 @@
           <p style="font-size:0.8em;color:#888;margin-bottom:12px;">Earn points by contributing: articles, podcasts, events, mentoring.</p>
           <div id="leaderboardList" style="font-size:0.85em;min-height:100px;"></div>
           <script>
-          fetch('https://kqiq2bltjd.execute-api.us-east-1.amazonaws.com/leaderboard')
-            .then(r=>r.json()).then(data=>{
-              var colors=['#FFD700','#C0C0C0','#CD7F32','#888','#888','#888','#888','#888'];
-              var html='';
-              data.forEach(function(m,i){
-                var lvlColor=m.level==='Legend'||m.level==='Champion'?'#FFD700':'#4CAF50';
-                var lvlBg=m.level==='Legend'||m.level==='Champion'?'rgba(255,215,0,0.15)':'rgba(76,175,80,0.15)';
-                var border=i<data.length-1?'border-bottom:1px solid #2a2a45;':'';
-                html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;'+border+'cursor:pointer;" onclick="showDetail(''+m.email+'')"><span><b style="color:'+colors[i]+';">#'+(i+1)+'</b> '+m.name+'</span><span style="color:'+lvlColor+';font-weight:700;">'+m.points+' pts <span style="font-size:0.7em;background:'+lvlBg+';padding:2px 8px;border-radius:10px;">'+m.level+'</span></span></div>';
-              });
-              document.getElementById('leaderboardList').innerHTML=html;
-            }).catch(function(){document.getElementById('leaderboardList').innerHTML='<p style="color:#888;">Unable to load leaderboard</p>';});
-          function showDetail(email){
-            fetch('https://kqiq2bltjd.execute-api.us-east-1.amazonaws.com/leaderboard/detail?email='+encodeURIComponent(email))
-              .then(r=>r.json()).then(function(m){
-                var acts=m.activities||[];
-                var html='<h3 style="color:#FFD700;margin:0 0 8px;">'+m.name+' — '+m.points+' pts ('+m.level+')</h3>';
-                html+='<div style="max-height:200px;overflow-y:auto;">';
-                acts.forEach(function(a){
-                  var icons={article:'📝',podcast:'🎙️',event:'🎤',referral:'🤝',job:'💼',mentor:'🧑‍🏫',organize:'🎯'};
-                  html+='<div style="padding:4px 0;border-bottom:1px solid #1a1a30;font-size:0.9em;">'+(icons[a.type]||'•')+' '+a.title+' <span style="color:#555;">('+a.date+' · +'+a.pts+'pts)</span></div>';
+          function loadLeaderboard(){
+            fetch("https://kqiq2bltjd.execute-api.us-east-1.amazonaws.com/leaderboard")
+              .then(function(r){return r.json()}).then(function(data){
+                var colors=["#FFD700","#C0C0C0","#CD7F32","#888","#888","#888","#888"];
+                var html="";
+                data.forEach(function(m,i){
+                  var lvlColor=(m.level==="Legend"||m.level==="Champion")?"#FFD700":"#4CAF50";
+                  var lvlBg=(m.level==="Legend"||m.level==="Champion")?"rgba(255,215,0,0.15)":"rgba(76,175,80,0.15)";
+                  var border=i<data.length-1?"border-bottom:1px solid #2a2a45;":"";
+                  html+="<div style='display:flex;justify-content:space-between;align-items:center;padding:8px 0;"+border+"'><span><b style='color:"+colors[i]+"'>#"+(i+1)+"</b> "+m.name+"</span><span style='color:"+lvlColor+";font-weight:700'>"+m.points+" pts <span style='font-size:0.7em;background:"+lvlBg+";padding:2px 8px;border-radius:10px'>"+m.level+"</span></span></div>";
                 });
-                html+='</div><button onclick="this.parentElement.innerHTML=document.getElementById('leaderboardList').dataset.cache" style="margin-top:8px;padding:4px 12px;background:#2a2a45;border:1px solid #FFD700;border-radius:6px;color:#FFD700;cursor:pointer;font-size:0.8em;">← Back</button>';
-                document.getElementById('leaderboardList').dataset.cache=document.getElementById('leaderboardList').innerHTML;
-                document.getElementById('leaderboardList').innerHTML=html;
-              });
+                document.getElementById("leaderboardList").innerHTML=html;
+              }).catch(function(){document.getElementById("leaderboardList").innerHTML="<p style='color:#888'>Unable to load</p>";});
           }
+          loadLeaderboard();
           </script>
           <div style="margin-top:12px;padding:10px;background:#151528;border-radius:8px;font-size:0.75em;color:#888;">
             <b style="color:#FFD700;">How to earn points:</b><br>
