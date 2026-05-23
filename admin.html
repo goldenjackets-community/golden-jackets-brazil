@@ -381,7 +381,7 @@ async function showAuthLogs() {
   try {
     var resp = await fetch('https://uf3x2i7xr7rziz4nswkmsd4k5i0dunaj.lambda-url.us-east-1.on.aws/', {
       method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({action:'get_logs'})
+      body: JSON.stringify({action:'get_logs', chapter: window._gjChapter || '', caller_email: sessionStorage.getItem('gj_email') || ''})
     });
     var data = await resp.json();
     var html = '<h3>🔐 Auth Logs — Lounge Activity</h3>';
