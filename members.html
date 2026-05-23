@@ -138,16 +138,33 @@
           function loadLeaderboard(){
             fetch("https://kqiq2bltjd.execute-api.us-east-1.amazonaws.com/leaderboard")
               .then(function(r){return r.json()}).then(function(data){
-                var colors=["#FFD700","#C0C0C0","#CD7F32","#888","#888","#888","#888"];
+                var colors=["#FFD700","#C0C0C0","#CD7F32","#888","#888","#888","#888","#888"];
                 var html="";
                 data.forEach(function(m,i){
                   var lvlColor=(m.level==="Legend"||m.level==="Champion")?"#FFD700":"#4CAF50";
                   var lvlBg=(m.level==="Legend"||m.level==="Champion")?"rgba(255,215,0,0.15)":"rgba(76,175,80,0.15)";
-                  var border=i<data.length-1?"border-bottom:1px solid #2a2a45;":"";
-                  html+="<div style='display:flex;justify-content:space-between;align-items:center;padding:8px 0;"+border+"'><span><b style='color:"+colors[i]+"'>#"+(i+1)+"</b> "+m.name+"</span><span style='color:"+lvlColor+";font-weight:700'>"+m.points+" pts <span style='font-size:0.7em;background:"+lvlBg+";padding:2px 8px;border-radius:10px'>"+m.level+"</span></span></div>";
+                  html+="<div style='border-bottom:1px solid #2a2a45;padding:6px 0'>";
+                  html+="<div style='display:flex;justify-content:space-between;align-items:center;cursor:pointer' data-email='"+m.email+"' onclick='toggleLB(this)'>";
+                  html+="<span><b style='color:"+colors[i]+"'>#"+(i+1)+"</b> "+m.name+"</span>";
+                  html+="<span style='color:"+lvlColor+";font-weight:700'>"+m.points+" pts <span style='font-size:0.7em;background:"+lvlBg+";padding:2px 8px;border-radius:10px'>"+m.level+"</span></span>";
+                  html+="</div><div class='lb-det' style='display:none;padding:6px 0 2px 20px;font-size:0.85em;color:#aaa'></div></div>";
                 });
                 document.getElementById("leaderboardList").innerHTML=html;
               }).catch(function(){document.getElementById("leaderboardList").innerHTML="<p style='color:#888'>Unable to load</p>";});
+          }
+          function toggleLB(el){
+            var d=el.nextElementSibling;
+            if(d.style.display==="none"){
+              d.style.display="block";
+              if(!d.dataset.loaded){
+                fetch("https://kqiq2bltjd.execute-api.us-east-1.amazonaws.com/leaderboard/detail?email="+encodeURIComponent(el.dataset.email))
+                  .then(function(r){return r.json()}).then(function(m){
+                    var acts=m.activities||[];var h="";
+                    acts.forEach(function(a){h+="<div style='padding:2px 0'>"+({article:"\ud83d\udcdd",podcast:"\ud83c\udfa4",event:"\ud83c\udfaf",referral:"\ud83e\udd1d",job:"\ud83d\udcbc"}[a.type]||"\u2022")+" "+a.title+" <span style='color:#555'>("+a.date+" +"+a.pts+"pts)</span></div>";});
+                    d.innerHTML=h||"No activities yet";d.dataset.loaded="1";
+                  });
+              }
+            }else{d.style.display="none";}
           }
           loadLeaderboard();
           </script>
