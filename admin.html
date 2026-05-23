@@ -128,6 +128,11 @@
         <div class="label">Metrics</div>
         <div class="desc">Members & articles stats</div>
       </div>
+      <div class="tool-btn" onclick="showAuthLogs()">
+        <div class="icon">🔐</div>
+        <div class="label">Auth Logs</div>
+        <div class="desc">Login activity & sessions</div>
+      </div>
       <div class="tool-btn" onclick="promoteChallenger()">
         <div class="icon">🏆</div>
         <div class="label">Promote</div>
@@ -370,6 +375,60 @@ async function exportCSV() {
 }
 
 // Metrics dashboard
+async function showAuthLogs() {
+  var output = document.getElementById('output');
+  output.innerHTML = '<h3>🔐 Auth Logs</h3><p style="color:#FFD700;">Loading...</p>';
+  try {
+    var resp = await fetch('https://uf3x2i7xr7rziz4nswkmsd4k5i0dunaj.lambda-url.us-east-1.on.aws/', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({action:'get_logs'})
+    });
+    var data = await resp.json();
+    var html = '<h3>🔐 Auth Logs — Lounge Activity</h3>';
+
+    // Active now
+    html += '<h4 style="color:#4CAF50;">🟢 Active Now (' + data.active_now.length + ')</h4>';
+    if (data.active_now.length) {
+      html += '<table><tr><th>Email</th><th>Since</th></tr>';
+      data.active_now.forEach(function(u){ html += '<tr><td>'+u.email+'</td><td>'+u.since.substring(11,19)+' UTC</td></tr>'; });
+      html += '</table>';
+    } else { html += '<p style="color:#999;">No one online right now</p>'; }
+
+    // Today
+    html += '<h4 style="color:#FFD700;">📅 Today (' + data.today.date + ') — ' + data.today.users.length + ' users</h4>';
+    if (data.today.users.length) {
+      html += '<table><tr><th>Email</th><th>Logins</th></tr>';
+      data.today.users.forEach(function(u){ html += '<tr><td>'+u.email+'</td><td>'+u.logins+'</td></tr>'; });
+      html += '</table>';
+    } else { html += '<p style="color:#999;">No logins today</p>'; }
+
+    // This month
+    html += '<h4 style="color:#64B5F6;">📆 This Month (' + data.month.month + ') — ' + data.month.users.length + ' users</h4>';
+    if (data.month.users.length) {
+      html += '<table><tr><th>Email</th><th>Logins</th></tr>';
+      data.month.users.sort(function(a,b){return b.logins-a.logins;});
+      data.month.users.forEach(function(u){ html += '<tr><td>'+u.email+'</td><td>'+u.logins+'</td></tr>'; });
+      html += '</table>';
+    }
+
+    // All time leaderboard
+    html += '<h4 style="color:#CE93D8;">🏆 All Time Leaderboard</h4>';
+    if (data.all_time.length) {
+      html += '<table><tr><th>#</th><th>Email</th><th>Total Logins</th><th>First Login</th><th>Last Login</th></tr>';
+      data.all_time.forEach(function(u,i){ html += '<tr><td>'+(i+1)+'</td><td>'+u.email+'</td><td>'+u.total+'</td><td>'+(u.first||'').substring(0,10)+'</td><td>'+(u.last||'').substring(0,16).replace('T',' ')+'</td></tr>'; });
+      html += '</table>';
+    }
+
+    // Never logged in (from Cognito - we know 8 FORCE_CHANGE_PASSWORD)
+    html += '<h4 style="color:#ef5350;">⚠️ Never Logged In (FORCE_CHANGE_PASSWORD)</h4>';
+    html += '<p style="color:#999;font-size:0.85em;">Check via Admin Panel → List Users for pending accounts</p>';
+
+    output.innerHTML = html;
+  } catch(e) {
+    output.innerHTML = '<h3>🔐 Auth Logs</h3><p style="color:red;">Error: '+e.message+'</p>';
+  }
+}
+
 async function showMetrics() {
   var data = await adminCall('list-users');
   if (!data || !data.users) return;
