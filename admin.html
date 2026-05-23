@@ -376,7 +376,7 @@ async function exportCSV() {
 
 // Metrics dashboard
 async function showAuthLogs() {
-  var output = document.getElementById('output');
+  var output = document.getElementById('adminOutput'); output.style.display='block';
   output.innerHTML = '<h3>🔐 Auth Logs</h3><p style="color:#FFD700;">Loading...</p>';
   try {
     var resp = await fetch('https://uf3x2i7xr7rziz4nswkmsd4k5i0dunaj.lambda-url.us-east-1.on.aws/', {
