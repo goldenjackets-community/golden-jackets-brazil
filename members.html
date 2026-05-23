@@ -743,7 +743,7 @@ function submitSuggestion(){
   if(!topic){msg.innerHTML='<span style="color:#f44336">Digite um tema</span>';return;}
   msg.innerHTML='<span style="color:#FFD700">Enviando...</span>';
   var email=sessionStorage.getItem('gj_email')||'unknown';
-  fetch('https://kqiq2bltjd.execute-api.us-east-1.amazonaws.com/admin',{method:'POST',headers:{'Content-Type':'application/json','Authorization':sessionStorage.getItem('gj_token')},body:JSON.stringify({action:'suggest-topic',topic:topic,type:type,email:email,name:name})})
+  fetch('https://kqiq2bltjd.execute-api.us-east-1.amazonaws.com/admin',{method:'POST',headers:{'Content-Type':'application/json','Authorization':sessionStorage.getItem('gj_token')},body:JSON.stringify({action:'suggest-topic',topic:topic,type:type,email:email,name:name})}).then(function(r){if(!r.ok)throw new Error(r.status);return r})
     .then(function(){msg.innerHTML='<span style="color:#4CAF50">✅ Sugestão enviada! +3 pts</span>';document.getElementById('suggestTopic').value='';})
     .catch(function(){msg.innerHTML='<span style="color:#4CAF50">✅ Sugestão registrada!</span>';document.getElementById('suggestTopic').value='';});
 }
