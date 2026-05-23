@@ -499,7 +499,7 @@ async function startMfaSetupLogin(session, emailVal) {
       sessionStorage.setItem('gj_mfa_session', data.Session);
       var otpauth = 'otpauth://totp/GoldenJackets:' + emailVal + '?secret=' + data.SecretCode + '&issuer=GoldenJackets';
       var qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(otpauth);
-      out.innerHTML = '<img src="' + qrUrl + '" style="border-radius:8px;margin-bottom:12px;"><br>' +
+      out.innerHTML = '<img src="' + qrUrl + '" style="border-radius:8px;margin-bottom:12px;"><br>' + '<p style="font-size:0.75em;color:#888;margin-bottom:8px;">📱 On mobile? Copy this key manually:</p><code style="background:#1a1a30;padding:4px 8px;border-radius:4px;font-size:0.8em;color:#FFD700;user-select:all;">' + data.SecretCode + '</code><br><br>' +
         '<input type="text" id="mfaSetupLoginCode" placeholder="000000" maxlength="6" style="text-align:center;font-size:1.5em;letter-spacing:8px;width:200px;padding:8px;background:#1a1a30;border:1px solid #2a2a45;border-radius:8px;color:#e0e0e0;" onkeydown="if(event.key===\'Enter\')confirmMfaSetupLogin()">' +
         '<br><button onclick="confirmMfaSetupLogin()" style="margin-top:12px;padding:10px 24px;background:linear-gradient(135deg,#FFD700,#B8860B);border:none;border-radius:8px;color:#151528;font-weight:700;cursor:pointer;">Verify & Complete Setup</button>' +
         '<p id="mfaSetupLoginMsg" style="margin-top:8px;font-size:0.85em;"></p>';
@@ -567,7 +567,7 @@ async function setupMfa() {
       var otpauth = 'otpauth://totp/GoldenJacketsBrazil:' + email + '?secret=' + data.SecretCode + '&issuer=GoldenJacketsBrazil';
       var qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(otpauth);
       out.innerHTML = '<p style="color:var(--gold);margin-bottom:12px;">Scan this QR code with Google Authenticator:</p>' +
-        '<img src="' + qrUrl + '" style="border-radius:8px;margin-bottom:12px;"><br>' +
+        '<img src="' + qrUrl + '" style="border-radius:8px;margin-bottom:12px;"><br>' + '<p style="font-size:0.75em;color:#888;margin-bottom:8px;">📱 On mobile? Copy this key manually:</p><code style="background:#1a1a30;padding:4px 8px;border-radius:4px;font-size:0.8em;color:#FFD700;user-select:all;">' + data.SecretCode + '</code><br><br>' +
         '<input type="text" id="mfaSetupCode" placeholder="Enter 6-digit code" maxlength="6" style="text-align:center;font-size:1.2em;letter-spacing:6px;width:200px;padding:8px;margin-bottom:8px;background:#1a1a30;border:1px solid #2a2a45;border-radius:8px;color:#e0e0e0;">' +
         '<br><button onclick="confirmMfaSetup()" style="padding:8px 20px;background:linear-gradient(135deg,#FFD700,#B8860B);border:none;border-radius:8px;color:#151528;font-weight:700;cursor:pointer;">Confirm MFA</button>' +
         '<p id="mfaSetupMsg" style="margin-top:8px;font-size:0.85em;"></p>';
