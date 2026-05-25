@@ -49,9 +49,13 @@ jobs:
           aws s3 sync . s3://www.goldenjacketsbrazil.com/ \
             --exclude ".git/*" \
             --exclude ".github/*" \
+            --exclude ".kiro/*" \
             --exclude ".gitignore" \
             --exclude "README.md" \
-            --exclude "SECURITY.md"
+            --exclude "SECURITY.md" \
+            --exclude "BACKLOG.md" \
+            --exclude "GUIDE.md" \
+            --exclude "CO_FOUNDER_GUIDE.md"
 
   invalidate:
     needs: [deploy]
