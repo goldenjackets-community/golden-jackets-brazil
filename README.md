@@ -76,6 +76,47 @@ Community website celebrating Brazilian professionals who earned all active AWS 
 | **Budgets** | Cost monitoring ($10/month alarm) |
 | **GitHub Actions** | CI/CD pipeline + auto-numbering cards |
 
+## Developer Tooling
+
+```
+┌─────────────────────────────────────────────────────┐
+│                  Developer Machine                    │
+│                                                      │
+│  ┌───────────┐  ┌──────────────┐  ┌──────────────┐ │
+│  │ Kiro CLI  │  │  MCP Server  │  │ Knowledge    │ │
+│  │ (AI Agent)│◄─┤ (Custom Tools)│  │ Bases (KBs)  │ │
+│  └─────┬─────┘  └──────┬───────┘  └──────────────┘ │
+│        │               │                            │
+│        ▼               ▼                            │
+│  ┌───────────┐  ┌──────────────┐                   │
+│  │ Steering  │  │  MCP Tools:  │                   │
+│  │ Files     │  │  • listmembers│                  │
+│  │ (.kiro/)  │  │  • chapterstatus│                │
+│  └───────────┘  │  • invalidatecache│              │
+│                 │  • suggesttopic│                  │
+│                 │  • listchapters│                  │
+│                 └──────────────┘                    │
+└─────────────────────────────────────────────────────┘
+```
+
+| Tool | Purpose |
+|------|---------|
+| **Kiro CLI** | AI-assisted development (code, deploy, operations) |
+| **MCP Server** | Custom tools for community management (list members, invalidate cache, chapter status) |
+| **Steering Files** | AI context rules (conventions, security, templates, tasks) — `.kiro/steering/` |
+| **Knowledge Bases** | Indexed project history, architecture docs, backlog for cross-session context |
+
+### Steering Files
+
+```
+.kiro/steering/
+├── conventions.md    # Code style, bilingual rules, structure
+├── infrastructure.md # Deploy, CI/CD, AWS guidelines
+├── security.md       # Auth, LGPD, data protection
+├── templates.md      # HTML templates for members, articles
+└── tasks.md          # Step-by-step for common operations
+```
+
 ## Project Structure
 
 ```
@@ -92,6 +133,8 @@ Community website celebrating Brazilian professionals who earned all active AWS 
 │   ├── partners/           # Partner logos (Sundog Education)
 │   ├── badges/             # AWS certification badges
 │   └── *.png / *.jpg       # Site assets
+├── .kiro/
+│   └── steering/           # AI development context (not deployed)
 ├── .github/
 │   └── workflows/
 │       ├── deploy.yml      # S3 deploy + CloudFront invalidation + auto-numbering
@@ -107,7 +150,7 @@ Community website celebrating Brazilian professionals who earned all active AWS 
 ### Deploy (`deploy.yml`)
 - Triggers on push to `main`
 - Auto-numbers member cards without `card-number`
-- Syncs to S3 buckets (origin + www)
+- Syncs to S3 (excludes `.kiro/`, `.github/`, docs)
 - Invalidates CloudFront cache
 - Runs smoke tests (site, lounge, admin, APIs)
 
@@ -156,6 +199,7 @@ Community website celebrating Brazilian professionals who earned all active AWS 
 |---------|------|
 | **Tutorials Dojo** | Discount codes + freebies (practice exams, ebooks, courses) |
 | **Sundog Education** | Discount code (GOLDEN_BRAZIL) + 5 free vouchers |
+| **AWS with Chetan** | AI & ML courses |
 
 ## Admin Features
 
@@ -167,6 +211,7 @@ Community website celebrating Brazilian professionals who earned all active AWS 
 - Community metrics (members by month)
 - Promote Challenger → Golden Jacket
 - View project backlog
+- Live architecture diagram (interactive, real-time AWS discovery)
 
 ## Community
 
@@ -188,8 +233,8 @@ This project is maintained by the Golden Jackets Brazil community.
 
 *Independent community, not officially affiliated with Amazon Web Services.*
 
-*Last updated: 10/05/2026*
+*Last updated: 25/05/2026*
 
 ## 🤖 Built With AI
 
-This project was entirely built using **Kiro CLI** (powered by Claude, Anthropic) — from HTML/CSS/JS to AWS infrastructure, Lambda functions, CI/CD pipelines, and admin panel.
+This project was entirely built using **Kiro CLI** (powered by Claude, Anthropic) — from HTML/CSS/JS to AWS infrastructure, Lambda functions, CI/CD pipelines, and admin panel. Development is accelerated with MCP Server (custom tools), Steering Files (AI context), and Knowledge Bases (persistent memory).
