@@ -613,6 +613,13 @@ async function rejectPR(number) {
 }
 </script>
 <script>
+function fileToBase64(file) {
+  return new Promise((resolve) => {
+    var reader = new FileReader();
+    reader.onload = function(e) { resolve(e.target.result.split(",")[1]); };
+    reader.readAsDataURL(file);
+  });
+}
 function showCreateChapter() {
   var out = document.getElementById('adminOutput');
   out.style.display = 'block';
@@ -628,6 +635,10 @@ function showCreateChapter() {
       <input id="cc_city" placeholder="Leader city" style="padding:8px;background:#1a1a30;border:1px solid #333;border-radius:6px;color:#fff;">
       <input id="cc_linkedin" placeholder="Leader LinkedIn URL" style="padding:8px;background:#1a1a30;border:1px solid #333;border-radius:6px;color:#fff;">
       <input id="cc_simplemaps" placeholder="SimpleMaps 2-letter (e.g. de)" style="padding:8px;background:#1a1a30;border:1px solid #333;border-radius:6px;color:#fff;">
+      <label style="color:#888;font-size:0.8em;margin-top:4px;">Leader Photo</label>
+      <input type="file" id="cc_photo" accept="image/*" style="padding:8px;background:#1a1a30;border:1px solid #333;border-radius:6px;color:#fff;">
+      <label style="color:#888;font-size:0.8em;margin-top:4px;">Jacket Image</label>
+      <input type="file" id="cc_jacket" accept="image/*" style="padding:8px;background:#1a1a30;border:1px solid #333;border-radius:6px;color:#fff;">
       <button onclick="createChapter()" style="padding:10px;background:linear-gradient(135deg,#FFD700,#B8860B);border:none;border-radius:6px;color:#151528;font-weight:700;cursor:pointer;margin-top:8px;">🚀 Create Chapter</button>
     </div>
     <div id="cc_status" style="margin-top:12px;"></div>
@@ -635,6 +646,11 @@ function showCreateChapter() {
 }
 
 async function createChapter() {
+  var photoFile = document.getElementById("cc_photo").files[0];
+  var jacketFile = document.getElementById("cc_jacket").files[0];
+  var photoB64 = "", jacketB64 = "";
+  if (photoFile) { photoB64 = await fileToBase64(photoFile); }
+  if (jacketFile) { jacketB64 = await fileToBase64(jacketFile); }
   var s = document.getElementById('cc_status');
   s.innerHTML = '<span style="color:#FFD700;">⏳ Triggering infrastructure creation...</span>';
   try {
@@ -651,7 +667,9 @@ async function createChapter() {
         leader_email: document.getElementById('cc_email').value,
         leader_city: document.getElementById('cc_city').value,
         leader_linkedin: document.getElementById('cc_linkedin').value,
-        simplemaps_code: document.getElementById('cc_simplemaps').value
+        simplemaps_code: document.getElementById("cc_simplemaps").value,
+        photo_base64: photoB64,
+        jacket_base64: jacketB64
       })
     });
     var data = await resp.json();
