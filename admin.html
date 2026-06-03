@@ -55,6 +55,11 @@
         <div class="label">List Users</div>
         <div class="desc">View all Cognito users and status</div>
       </div>
+      <div class="tool-btn" id="btnCreateChapter" style="display:none;" onclick="showCreateChapter()">
+        <div class="icon">🌐</div>
+        <div class="label">Create Chapter</div>
+        <div class="desc">Create new country chapter (Global Admin)</div>
+      </div>
       <div class="tool-btn" id="btnAllChapters" style="display:none;" onclick="listAllUsers()">
         <div class="icon">🌍</div>
         <div class="label">All Chapters</div>
@@ -513,7 +518,7 @@ function filterPartnerStats(){
 }
 // Global admin: show All Chapters button
 var GLOBAL_ADMINS = ['ricardo.gulias@goldenjacketsbrazil.com'];
-if (GLOBAL_ADMINS.includes(email)) { var btn = document.getElementById('btnAllChapters'); if(btn) btn.style.display=''; }
+if (GLOBAL_ADMINS.includes(email)) { var btn = document.getElementById('btnAllChapters'); if(btn) btn.style.display=''; ; var btn2 = document.getElementById("btnCreateChapter"); if(btn2) btn2.style.display=""; }
 
 async function listAllUsers() {
   var body = {action:'list-users'};
@@ -605,5 +610,53 @@ async function rejectPR(number) {
   if (!reason) return;
   var data = await adminCall('close-pr', {pr_number: number, reason: reason});
   if (data && data.message) { document.getElementById('adminOutput').innerHTML = '<span style="color:#f44336;">❌ ' + data.message + '</span>'; }
+}
+</script>
+<script>
+function showCreateChapter() {
+  var out = document.getElementById('adminOutput');
+  out.style.display = 'block';
+  out.innerHTML = `
+    <h3 style="color:#FFD700;margin-bottom:12px;">🌐 Create New Chapter</h3>
+    <div style="display:grid;gap:8px;max-width:400px;">
+      <input id="cc_country" placeholder="Country (e.g. Germany)" style="padding:8px;background:#1a1a30;border:1px solid #333;border-radius:6px;color:#fff;">
+      <input id="cc_code" placeholder="Code lowercase (e.g. germany)" style="padding:8px;background:#1a1a30;border:1px solid #333;border-radius:6px;color:#fff;">
+      <input id="cc_domain" placeholder="Domain (e.g. goldenjackets.de)" style="padding:8px;background:#1a1a30;border:1px solid #333;border-radius:6px;color:#fff;">
+      <input id="cc_flag" placeholder="Flag emoji (e.g. 🇩🇪)" style="padding:8px;background:#1a1a30;border:1px solid #333;border-radius:6px;color:#fff;">
+      <input id="cc_leader" placeholder="Leader name" style="padding:8px;background:#1a1a30;border:1px solid #333;border-radius:6px;color:#fff;">
+      <input id="cc_email" placeholder="Leader email" style="padding:8px;background:#1a1a30;border:1px solid #333;border-radius:6px;color:#fff;">
+      <input id="cc_city" placeholder="Leader city" style="padding:8px;background:#1a1a30;border:1px solid #333;border-radius:6px;color:#fff;">
+      <input id="cc_linkedin" placeholder="Leader LinkedIn URL" style="padding:8px;background:#1a1a30;border:1px solid #333;border-radius:6px;color:#fff;">
+      <input id="cc_simplemaps" placeholder="SimpleMaps 2-letter (e.g. de)" style="padding:8px;background:#1a1a30;border:1px solid #333;border-radius:6px;color:#fff;">
+      <button onclick="createChapter()" style="padding:10px;background:linear-gradient(135deg,#FFD700,#B8860B);border:none;border-radius:6px;color:#151528;font-weight:700;cursor:pointer;margin-top:8px;">🚀 Create Chapter</button>
+    </div>
+    <div id="cc_status" style="margin-top:12px;"></div>
+  `;
+}
+
+async function createChapter() {
+  var s = document.getElementById('cc_status');
+  s.innerHTML = '<span style="color:#FFD700;">⏳ Triggering infrastructure creation...</span>';
+  try {
+    var resp = await fetch(GJ_CONFIG.ADMIN_API, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','Authorization':'Bearer '+sessionStorage.getItem('gj_token')},
+      body: JSON.stringify({
+        action: 'create-chapter',
+        country: document.getElementById('cc_country').value,
+        code: document.getElementById('cc_code').value,
+        domain: document.getElementById('cc_domain').value,
+        flag: document.getElementById('cc_flag').value,
+        leader_name: document.getElementById('cc_leader').value,
+        leader_email: document.getElementById('cc_email').value,
+        leader_city: document.getElementById('cc_city').value,
+        leader_linkedin: document.getElementById('cc_linkedin').value,
+        simplemaps_code: document.getElementById('cc_simplemaps').value
+      })
+    });
+    var data = await resp.json();
+    if (data.error) { s.innerHTML = '<span style="color:#f44336;">❌ ' + data.error + '</span>'; }
+    else { s.innerHTML = '<span style="color:#4CAF50;">✅ ' + data.message + '</span><br><a href="https://github.com/goldenjackets-community/golden-jackets-infra/actions" target="_blank" style="color:#FFD700;">View progress on GitHub Actions →</a>'; }
+  } catch(e) { s.innerHTML = '<span style="color:#f44336;">❌ Error: ' + e.message + '</span>'; }
 }
 </script>
