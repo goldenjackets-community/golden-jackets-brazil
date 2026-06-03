@@ -620,6 +620,39 @@ function fileToBase64(file) {
     reader.readAsDataURL(file);
   });
 }
+
+function pollChapterStatus(code, el) {
+  var attempts = 0;
+  var interval = setInterval(async function() {
+    attempts++;
+    if (attempts > 30) { clearInterval(interval); el.innerHTML += '<br><span style="color:#FFA500;">Timeout — check GitHub Actions manually.</span>'; return; }
+    try {
+      var resp = await fetch(GJ_CONFIG.ADMIN_API, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json','Authorization':'Bearer '+sessionStorage.getItem('gj_token')},
+        body: JSON.stringify({action: 'chapter-status', code: code})
+      });
+      var data = await resp.json();
+      if (data.status === 'success') {
+        clearInterval(interval);
+        var ns = (data.nameservers || '').split(',').map(function(n){ return '<li>'+n.trim()+'</li>'; }).join('');
+        el.innerHTML = '<div style="background:#1a1a30;border:1px solid #4CAF50;border-radius:8px;padding:16px;margin-top:12px;">' +
+          '<h4 style="color:#4CAF50;margin-bottom:8px;">🎉 Chapter Created!</h4>' +
+          '<table style="font-size:0.85em;color:#ccc;">' +
+          '<tr><td style="padding:4px 12px 4px 0;color:#888;">CloudFront</td><td><a href="https://'+data.cloudfront_domain+'" target="_blank" style="color:#FFD700;">'+data.cloudfront_domain+'</a></td></tr>' +
+          '<tr><td style="padding:4px 12px 4px 0;color:#888;">Repo</td><td><a href="https://github.com/'+data.repo+'" target="_blank" style="color:#FFD700;">'+data.repo+'</a></td></tr>' +
+          '<tr><td style="padding:4px 12px 4px 0;color:#888;">Domain</td><td>'+data.domain+'</td></tr>' +
+          '</table>' +
+          '<p style="color:#FFD700;margin-top:12px;font-size:0.85em;">📋 Nameservers (send to Chapter Leader):</p>' +
+          '<ul style="color:#ccc;font-size:0.8em;margin-left:16px;">'+ns+'</ul>' +
+          '<p style="color:#888;margin-top:12px;font-size:0.8em;">Next: Upload photo + jacket → Leader points DNS → Add to global map</p>' +
+          '</div>';
+      } else {
+        el.querySelector('span:last-child').textContent = '⏳ Waiting... ('+attempts*10+'s)';
+      }
+    } catch(e) {}
+  }, 10000);
+}
 function showCreateChapter() {
   var out = document.getElementById('adminOutput');
   out.style.display = 'block';
@@ -674,7 +707,10 @@ async function createChapter() {
     });
     var data = await resp.json();
     if (data.error) { s.innerHTML = '<span style="color:#f44336;">❌ ' + data.error + '</span>'; }
-    else { s.innerHTML = '<span style="color:#4CAF50;">✅ ' + data.message + '</span><br><a href="https://github.com/goldenjackets-community/golden-jackets-infra/actions" target="_blank" style="color:#FFD700;">View progress on GitHub Actions →</a>'; }
+    else { 
+      s.innerHTML = '<span style="color:#4CAF50;">✅ ' + data.message + '</span><br><span style="color:#888;">⏳ Polling for results...</span>';
+      pollChapterStatus(document.getElementById('cc_code').value, s);
+    }
   } catch(e) { s.innerHTML = '<span style="color:#f44336;">❌ Error: ' + e.message + '</span>'; }
 }
 </script>
