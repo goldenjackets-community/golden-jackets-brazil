@@ -231,6 +231,14 @@
     .member-card.challenger h3 { color: #EFEFEF; }
     .member-card.challenger .tag { background: linear-gradient(135deg, #D4D4DC, #909098); color: #151528; font-weight: 700; }
     .member-card.challenger:hover { box-shadow: 0 8px 40px rgba(200,200,220,0.25); border-color: rgba(200,200,220,0.5); }
+    .member-card.rising::before { background: linear-gradient(var(--angle, 0deg), #CD7F32, #A0522D, #D4944A, #8B4513, #CD7F32); animation: rotateBorder 4s linear infinite; }
+    .member-card.rising { box-shadow: 0 0 20px rgba(205,127,50,0.12); }
+    .member-card.rising h3 { color: #E8A854 !important; }
+    .member-card.rising .tag { background: linear-gradient(135deg, #D4944A, #A0522D); color: #fff; font-weight: 700; }
+    .member-card.rising:hover { box-shadow: 0 8px 40px rgba(205,127,50,0.25); border-color: rgba(205,127,50,0.5); }
+    .member-card.rising .certified { color: #F0B866 !important; }
+    .member-card.rising .location { color: #E8A854 !important; font-weight: 700; }
+    .member-card.rising .card-number { color: rgba(232,168,84,0.8) !important; }
     .member-card.alumni::before { background: linear-gradient(var(--angle, 0deg), #E6BE3A, #C9A020, #DDAF30, #C9A020, #E6BE3A) !important; animation: rotateBorder 4s linear infinite; }
     .member-card.alumni { box-shadow: 0 0 15px rgba(210,175,48,0.12); border-color: rgba(210,175,48,0.3); }
     .member-card.alumni h3 { color: var(--gold); }
@@ -385,6 +393,7 @@
       <a href="#members">Members</a>
       <a href="#alumni">Alumni</a>
       <a href="#challengers">Challengers</a>
+      <a href="#rising">Rising</a>
       <a href="#sponsors">Sponsors</a>
       <a href="#events">Events</a>
       <a href="#articles">Articles &amp; Talks</a>
@@ -398,6 +407,7 @@
     <a href="#members" onclick="document.querySelector('.mobile-menu').classList.remove('open')">Members</a>
     <a href="#alumni" onclick="document.querySelector('.mobile-menu').classList.remove('open')">Alumni</a>
     <a href="#challengers" onclick="document.querySelector('.mobile-menu').classList.remove('open')">Challengers</a>
+    <a href="#rising" onclick="document.querySelector('.mobile-menu').classList.remove('open')">Rising</a>
     <a href="#sponsors" onclick="document.querySelector('.mobile-menu').classList.remove('open')">Sponsors</a>
     <a href="#events" onclick="document.querySelector('.mobile-menu').classList.remove('open')">Events</a>
     <a href="#articles" onclick="document.querySelector('.mobile-menu').classList.remove('open')">Articles &amp; Talks</a>
@@ -1740,34 +1750,6 @@
       <span class="total" id="challengerTotal">Total: 19 challengers</span>
     </div>
     <div class="members-grid">
-            <div class="member-card challenger" data-state="SP">
-        <span class="card-number">#19</span>
-        <img src="assets/members/ed-carlos-marinho-de-oliveira.jpg" alt="Ed Carlos Marinho de Oliveira" class="photo">
-        <h3>Ed Carlos Marinho de Oliveira</h3>
-        <div class="location">Guarulhos, Brazil</div>
-        <div class="tags">
-          <span class="tag">10/12 Certifications</span>
-          <span class="tag">Challenger</span>
-        </div>
-        <div class="certified" style="color:#fff;font-weight:700;">2 away from Golden Jacket 🔥</div>
-        <div class="socials">
-          <a href="https://www.linkedin.com/in/edcarlosmarinho/" target="_blank">in</a>
-        </div>
-      </div>
-      <div class="member-card challenger" data-state="SP">
-        <span class="card-number">#18</span>
-        <img src="assets/members/adriano-fonseca-da-costa.jpg" alt="Adriano Fonseca da Costa" class="photo">
-        <h3>Adriano Fonseca da Costa</h3>
-        <div class="location">São Paulo, Brazil</div>
-        <div class="tags">
-          <span class="tag">10/12 Certifications</span>
-          <span class="tag">Challenger</span>
-        </div>
-        <div class="certified" style="color:#fff;font-weight:700;">2 away from Golden Jacket 🔥</div>
-        <div class="socials">
-          <a href="https://www.linkedin.com/in/adrianofcosta?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank">in</a>
-        </div>
-      </div>
       <!-- Challenger cards go here -->
 
       <div class="member-card challenger" data-state="PR">
@@ -2024,8 +2006,98 @@
           <a href="https://www.linkedin.com/in/andreluizrosa/" target="_blank">in</a>
         </div>
       </div>
+
+      <div class="member-card challenger" data-state="SP">
+        <span class="card-number">#18</span>
+        <img src="assets/members/adriano-fonseca-da-costa.jpg" alt="Adriano Fonseca da Costa" class="photo">
+        <h3>Adriano Fonseca da Costa</h3>
+        <div class="location">São Paulo, Brazil</div>
+        <div class="tags">
+          <span class="tag">10/12 Certifications</span>
+          <span class="tag">Challenger</span>
+        </div>
+        <div class="certified" style="color:#fff;font-weight:700;">2 away from Golden Jacket 🔥</div>
+        <div class="socials">
+          <a href="https://www.linkedin.com/in/adrianofcosta?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank">in</a>
+        </div>
+      </div>
+
+      <div class="member-card challenger" data-state="SP">
+        <span class="card-number">#19</span>
+        <img src="assets/members/ed-carlos-marinho-de-oliveira.jpg" alt="Ed Carlos Marinho de Oliveira" class="photo">
+        <h3>Ed Carlos Marinho de Oliveira</h3>
+        <div class="location">Guarulhos, Brazil</div>
+        <div class="tags">
+          <span class="tag">10/12 Certifications</span>
+          <span class="tag">Challenger</span>
+        </div>
+        <div class="certified" style="color:#fff;font-weight:700;">2 away from Golden Jacket 🔥</div>
+        <div class="socials">
+          <a href="https://www.linkedin.com/in/edcarlosmarinho/" target="_blank">in</a>
+        </div>
+      </div>
 <!-- END_CHALLENGERS -->
 
+    </div>
+  </section>
+
+  <!-- Rising Section -->
+  <section id="rising" class="members" style="text-align:center;">
+    <h2 style="font-size:1.6em;color:#CD7F32;margin-bottom:8px;">🚀 Rising</h2>
+    <p style="color:var(--text-muted);font-size:0.9em;margin-bottom:8px;">Professionals with 8–9 AWS certifications — rising stars on the path to the Golden Jacket</p>
+    <p style="color:#CD7F32;font-size:0.75em;margin-bottom:30px;font-style:italic;">Keep pushing — your Golden Jacket awaits 🏆</p>
+    <div class="filter-bar">
+      <label>Filter by State:</label>
+      <select id="risingStateFilter" onchange="filterRising()">
+        <option value="All">All</option>
+        <option value="AC">Acre</option>
+        <option value="AL">Alagoas</option>
+        <option value="AP">Amapá</option>
+        <option value="AM">Amazonas</option>
+        <option value="BA">Bahia</option>
+        <option value="CE">Ceará</option>
+        <option value="DF">Distrito Federal</option>
+        <option value="ES">Espírito Santo</option>
+        <option value="GO">Goiás</option>
+        <option value="MA">Maranhão</option>
+        <option value="MT">Mato Grosso</option>
+        <option value="MS">Mato Grosso do Sul</option>
+        <option value="MG">Minas Gerais</option>
+        <option value="PA">Pará</option>
+        <option value="PB">Paraíba</option>
+        <option value="PR">Paraná</option>
+        <option value="PE">Pernambuco</option>
+        <option value="PI">Piauí</option>
+        <option value="RJ">Rio de Janeiro</option>
+        <option value="RN">Rio Grande do Norte</option>
+        <option value="RS">Rio Grande do Sul</option>
+        <option value="RO">Rondônia</option>
+        <option value="RR">Roraima</option>
+        <option value="SC">Santa Catarina</option>
+        <option value="SP">São Paulo</option>
+        <option value="SE">Sergipe</option>
+        <option value="TO">Tocantins</option>
+      </select>
+      <span class="total" id="risingTotal">Total: 1 rising</span>
+    </div>
+    <div class="members-grid">
+
+      <div class="member-card rising" data-state="SP">
+        <span class="card-number">#1</span>
+        <img src="assets/members/ricardoamaralcaeiro.jpg" alt="Ricardo Amaral Caeiro" class="photo">
+        <h3>Ricardo Amaral Caeiro</h3>
+        <div class="location">São Paulo, SP, Brazil</div>
+        <div class="tags">
+          <span class="tag">8/12 Certifications</span>
+          <span class="tag">Rising</span>
+        </div>
+        <div class="certified" style="color:#F0B866;font-weight:700;">4 away from Golden Jacket 🚀</div>
+        <div class="socials">
+          <a href="https://www.linkedin.com/in/riccaeiro/" target="_blank">in</a>
+        </div>
+      </div>
+
+<!-- END_RISING -->
     </div>
   </section>
 
@@ -2521,6 +2593,21 @@
       document.getElementById('alumniTotal').textContent='Total: '+visible+' alumni';
     }
 
+    function filterRising(){
+      var state=document.getElementById('risingStateFilter').value;
+      var cards=document.querySelectorAll('#rising .member-card');
+      var visible=0;
+      cards.forEach(function(card){
+        if(state==='All'||!card.dataset.state||card.dataset.state===state){
+          card.style.display='';
+          visible++;
+        }else{
+          card.style.display='none';
+        }
+      });
+      document.getElementById('risingTotal').textContent='Total: '+visible+' rising';
+    }
+
     // Animated counter
     function animateCount(el,target){
       var isPlus=target.toString().includes('+');
@@ -2867,8 +2954,9 @@ setInterval(updateCountdowns, 1000);
   var golden = document.querySelectorAll('#members .member-card:not(.challenger)').length;
   var challengers = document.querySelectorAll('#challengers .member-card.challenger').length;
   var alumni = document.querySelectorAll('#alumni .member-card.alumni').length;
-  var total = golden + challengers + alumni;
-  var certs = (golden * 12) + (challengers * 11) + (alumni * 12); // approximate, challengers have 10-11
+  var rising = document.querySelectorAll('#rising .member-card.rising').length;
+  var total = golden + challengers + alumni + rising;
+  var certs = (golden * 12) + (challengers * 11) + (alumni * 12) + (rising * 8); // approximate
   var states = new Set();
   document.querySelectorAll('.member-card[data-state]').forEach(function(c){ states.add(c.dataset.state); });
 
