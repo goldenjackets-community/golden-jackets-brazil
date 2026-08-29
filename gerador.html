@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerador de Card #EuVou — Golden Jackets</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#0a0e1a; font-family:'Segoe UI',Arial,sans-serif; color:#fff; padding:20px; }
+  .container { max-width:900px; margin:0 auto; }
+  h1 { color:#FFD700; text-align:center; font-size:1.4em; margin-bottom:6px; }
+  .subtitle { text-align:center; color:#c8d0e0; font-size:0.9em; margin-bottom:24px; }
+
+  .form { background:#111125; border:1px solid #2a2a45; border-radius:12px; padding:20px; margin-bottom:24px; }
+  .form label { display:block; color:#FFD700; font-size:0.85em; font-weight:700; margin:14px 0 6px; }
+  .form label:first-child { margin-top:0; }
+  .form input[type=text], .form select, .form input[type=file] {
+    width:100%; padding:12px 14px; background:#0a0e1a; border:1px solid #2a2a45;
+    border-radius:8px; color:#fff; font-size:0.95em; font-family:inherit;
+  }
+  .form .hint { color:#888; font-size:0.78em; margin-top:4px; }
+  .btn {
+    display:block; width:100%; margin-top:20px; padding:14px;
+    background:linear-gradient(135deg,#FFD700,#B8860B); color:#0a0e1a;
+    border:none; border-radius:8px; font-size:1.05em; font-weight:800; cursor:pointer;
+  }
+  .btn:active { transform:scale(0.98); }
+
+  .preview-label { text-align:center; color:#888; font-size:0.8em; margin-bottom:10px; }
+  .card-scale { display:flex; justify-content:center; overflow:auto; }
+
+  /* ===== CARD (same structure as the official one) ===== */
+  .card {
+    width:800px; height:1000px; position:relative; overflow:hidden; flex-shrink:0;
+    background:radial-gradient(ellipse at 70% 20%, #16203a 0%, #0a0e1a 55%);
+    transform-origin:top center;
+  }
+  .mosaic { position:absolute; bottom:0; left:0; width:100%; height:230px; z-index:0; opacity:0.9; }
+  .mosaic span { position:absolute; width:14px; height:14px; }
+  .content { position:relative; z-index:2; padding:48px 50px; height:100%; display:flex; flex-direction:column; }
+  .brand { display:flex; align-items:center; gap:12px; margin-bottom:34px; }
+  .brand .jacket-icon { width:56px; height:56px; object-fit:contain; }
+  .brand .brand-txt .t1 { font-size:1.5em; font-weight:800; line-height:1; }
+  .brand .brand-txt .t2 { font-size:0.72em; color:#FFD700; letter-spacing:3px; text-transform:uppercase; margin-top:3px; }
+  h2.title .small { color:#fff; font-size:1.5em; font-weight:400; display:block; }
+  h2.title .big { color:#fff; font-size:2.7em; font-weight:800; display:block; line-height:1.05; margin-top:2px; }
+  h2.title .big .gold { color:#FFD700; }
+  .middle { display:flex; gap:34px; margin-top:38px; flex:1; }
+  .photo-wrap { position:relative; width:320px; flex-shrink:0; }
+  .photo-wrap img { width:320px; height:420px; object-fit:cover; border-radius:10px; border:2px solid rgba(255,215,0,0.35); box-shadow:0 0 40px rgba(255,215,0,0.15); }
+  .photo-wrap .placeholder { width:320px; height:420px; border-radius:10px; border:2px dashed rgba(255,215,0,0.4); display:flex; align-items:center; justify-content:center; color:#666; font-size:0.9em; text-align:center; padding:20px; }
+  .euvou { position:absolute; bottom:-18px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,#FFD700,#B8860B); color:#0a0e1a; font-weight:900; font-size:1.7em; padding:8px 34px; border-radius:30px; box-shadow:0 6px 20px rgba(0,0,0,0.4); white-space:nowrap; }
+  .name { margin-top:40px; text-align:center; background:linear-gradient(135deg,#1a2a4a,#0f1830); border:1px solid rgba(255,215,0,0.3); color:#FFD700; font-weight:800; font-size:1.4em; padding:8px 0; border-radius:8px; width:320px; }
+  .right { flex:1; display:flex; flex-direction:column; }
+  .theme { color:#fff; font-size:1.7em; font-weight:700; line-height:1.35; }
+  .theme .gold { color:#FFD700; }
+  .theme .theme-sub { font-size:0.72em; font-weight:500; color:#c8d0e0; display:inline-block; margin-top:12px; line-height:1.35; }
+  .br-flag { display:inline-block; width:30px; height:21px; background:#009c3b; border-radius:3px; position:relative; vertical-align:middle; margin-left:6px; }
+  .br-flag > span:first-child { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) rotate(45deg); width:15px; height:15px; background:#ffdf00; }
+  .br-flag > span:last-child { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:7px; height:7px; background:#002776; border-radius:50%; z-index:2; }
+  .info-box { margin-top:auto; background:rgba(20,30,55,0.75); border:1px solid rgba(255,215,0,0.25); border-radius:14px; padding:24px 26px; }
+  .info-row { display:flex; align-items:flex-start; gap:14px; color:#fff; margin-bottom:16px; font-size:1.05em; }
+  .info-row:last-child { margin-bottom:0; }
+  .info-row .ic { font-size:1.3em; line-height:1; }
+  .info-row .ic-jacket { width:26px; height:26px; object-fit:contain; flex-shrink:0; }
+  .info-row .sub { color:#c8d0e0; font-weight:400; }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧥 Gerador de Card #EuVou</h1>
+    <p class="subtitle">Crie seu card da comunidade Golden Jackets para o AWS Summit São Paulo</p>
+
+    <div class="form">
+      <label>Seu nome</label>
+      <input type="text" id="inName" placeholder="Ex: Maria Silva" value="Seu Nome">
+
+      <label>Sua foto</label>
+      <input type="file" id="inPhoto" accept="image/*">
+      <div class="hint">De preferência uma foto vertical (retrato). Fica só no seu navegador — nada é enviado.</div>
+
+      <label>Sua categoria</label>
+      <select id="inCat">
+        <option value="golden">🧥 Golden Jacket (all-certified 12/12)</option>
+        <option value="challenger">⚔️ Challenger (10–11 certs)</option>
+        <option value="rising">🚀 Rising (7–9 certs)</option>
+        <option value="member">Membro da comunidade</option>
+      </select>
+
+      <label>Frase / cargo (linha do rodapé)</label>
+      <input type="text" id="inRole" placeholder="Ex: Golden Jacket · São Paulo" value="Golden Jacket Community">
+
+      <button class="btn" id="btnDownload">📥 Baixar meu card</button>
+    </div>
+
+    <p class="preview-label">Pré-visualização</p>
+    <div class="card-scale">
+      <div class="card" id="card">
+        <div class="mosaic" id="mosaic"></div>
+        <div class="content">
+          <div class="brand">
+            <img class="jacket-icon" src="assets/jacket-icon.png" alt="Golden Jackets" crossorigin="anonymous">
+            <div class="brand-txt">
+              <div class="t1">Golden Jackets</div>
+              <div class="t2">Community</div>
+            </div>
+          </div>
+          <h2 class="title">
+            <span class="small">Nos vemos no</span>
+            <span class="big">AWS Summit <span class="gold">São Paulo</span></span>
+          </h2>
+          <div class="middle">
+            <div>
+              <div class="photo-wrap">
+                <img id="cardPhoto" src="" alt="" style="display:none;">
+                <div class="placeholder" id="cardPlaceholder">📷<br>Sua foto aqui</div>
+                <div class="euvou">#EuVou</div>
+              </div>
+              <div class="name" id="cardName">Seu Nome</div>
+            </div>
+            <div class="right">
+              <div class="theme">
+                <span class="gold">52 Golden Jackets</span> all-certified no Brasil <span class="br-flag"><span></span><span></span></span><br>
+                <span class="theme-sub">uma comunidade de 80 profissionais na jornada rumo à jaqueta dourada — parte de um movimento global com <span class="gold">200 membros</span> em 21 países.</span>
+              </div>
+              <div class="info-box">
+                <div class="info-row"><span class="ic">📅</span><div><b>3 de setembro</b></div></div>
+                <div class="info-row"><span class="ic">📍</span><div><b>São Paulo Expo</b><br><span class="sub">São Paulo — SP</span></div></div>
+                <div class="info-row"><img class="ic-jacket" src="assets/jacket-icon.png" alt="" crossorigin="anonymous"><div><b id="cardRole">Golden Jackets Community</b></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ---- mosaic ----
+    (function(){
+      var m=document.getElementById('mosaic'), cols=Math.ceil(800/16), rows=14;
+      var golds=['#FFD700','#B8860B','#DAA520','#8B6914','#F0C838'];
+      for(var r=0;r<rows;r++)for(var c=0;c<cols;c++){
+        if(Math.random() < (r/rows)*0.7+0.05){
+          var s=document.createElement('span');
+          s.style.left=(c*16)+'px'; s.style.bottom=(r*16)+'px';
+          s.style.background=golds[Math.floor(Math.random()*golds.length)];
+          s.style.opacity=(0.3+Math.random()*0.6).toFixed(2);
+          m.appendChild(s);
+        }
+      }
+    })();
+
+    // ---- responsive preview scaling ----
+    function scaleCard(){
+      var card=document.getElementById('card');
+      var avail=Math.min(document.querySelector('.container').clientWidth, 800);
+      var scale=avail/800;
+      card.style.transform='scale('+scale+')';
+      document.querySelector('.card-scale').style.height=(1000*scale)+'px';
+    }
+    window.addEventListener('resize', scaleCard); scaleCard();
+
+    // ---- live bindings ----
+    var inName=document.getElementById('inName'), inRole=document.getElementById('inRole');
+    var inCat=document.getElementById('inCat'), inPhoto=document.getElementById('inPhoto');
+    inName.addEventListener('input', function(){ document.getElementById('cardName').textContent=this.value||'Seu Nome'; });
+    inRole.addEventListener('input', function(){ document.getElementById('cardRole').textContent=this.value||'Golden Jackets Community'; });
+
+    inPhoto.addEventListener('change', function(e){
+      var f=e.target.files[0]; if(!f) return;
+      var reader=new FileReader();
+      reader.onload=function(ev){
+        var img=document.getElementById('cardPhoto');
+        img.src=ev.target.result; img.style.display='block';
+        document.getElementById('cardPlaceholder').style.display='none';
+      };
+      reader.readAsDataURL(f);
+    });
+
+    // ---- download via html2canvas ----
+    document.getElementById('btnDownload').addEventListener('click', function(){
+      var btn=this; btn.textContent='⏳ Gerando...';
+      var card=document.getElementById('card');
+      var prev=card.style.transform; card.style.transform='none';
+      html2canvas(card, {backgroundColor:'#0a0e1a', width:800, height:1000, scale:2, useCORS:true}).then(function(canvas){
+        card.style.transform=prev;
+        var link=document.createElement('a');
+        var nm=(inName.value||'golden-jacket').toLowerCase().replace(/[^a-z0-9]+/g,'-');
+        link.download='card-euvou-'+nm+'.png';
+        link.href=canvas.toDataURL('image/png');
+        link.click();
+        btn.textContent='📥 Baixar meu card';
+      }).catch(function(err){ card.style.transform=prev; btn.textContent='📥 Baixar meu card'; alert('Erro ao gerar: '+err); });
+    });
+  </script>
+</body>
+</html>
