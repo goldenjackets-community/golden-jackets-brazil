@@ -194,25 +194,127 @@
         var img=document.getElementById('cardPhoto');
         img.src=ev.target.result; img.style.display='block';
         document.getElementById('cardPlaceholder').style.display='none';
+        img.onload=function(){ if(typeof schedulePrerender==='function') schedulePrerender(); };
       };
       reader.readAsDataURL(f);
     });
 
-    // ---- download via html2canvas ----
+    // ---- download via html2canvas (mobile-friendly, iOS-safe) ----
+    // No iOS/Safari o navigator.share COM ARQUIVO só é permitido se chamado
+    // de forma SÍNCRONA dentro do gesto de toque. html2canvas + toBlob são
+    // assíncronos e "consomem" a ativação do usuário, então o share falha.
+    // Estratégia: renderizar o card ANTES (ao mudar foto/nome/categoria) e
+    // guardar o File pronto; no clique, só disparamos share/download — sem await.
+
+    var isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) ||
+                (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+
+    var readyFile=null, readyBlobUrl=null, rendering=false, renderTimer=null;
+
+    function fileNameFor(){
+      var nm=(inName.value||'golden-jacket').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+      return 'card-euvou-'+(nm||'golden-jacket')+'.png';
+    }
+
+    function renderCard(){
+      return new Promise(function(resolve, reject){
+        var card=document.getElementById('card');
+        var prev=card.style.transform; card.style.transform='none';
+        html2canvas(card, {backgroundColor:'#0a0e1a', width:800, height:1000, scale:2, useCORS:true})
+          .then(function(canvas){
+            card.style.transform=prev;
+            canvas.toBlob(function(blob){
+              if(!blob){ reject(new Error('toBlob nulo')); return; }
+              resolve(blob);
+            }, 'image/png');
+          })
+          .catch(function(err){ card.style.transform=prev; reject(err); });
+      });
+    }
+
+    // Pré-renderiza em background e deixa o File pronto (com debounce).
+    function schedulePrerender(){
+      if(renderTimer) clearTimeout(renderTimer);
+      renderTimer=setTimeout(function(){
+        if(rendering) return; rendering=true;
+        renderCard().then(function(blob){
+          if(readyBlobUrl) URL.revokeObjectURL(readyBlobUrl);
+          readyFile=new File([blob], fileNameFor(), {type:'image/png'});
+          readyBlobUrl=URL.createObjectURL(blob);
+          rendering=false;
+        }).catch(function(){ readyFile=null; rendering=false; });
+      }, 400);
+    }
+
+    // Baixa via <a download> (Blob URL). No iOS o Safari costuma ignorar o
+    // download, então lá preferimos abrir a imagem para o usuário salvar.
+    function anchorDownload(blobUrl, filename){
+      var a=document.createElement('a');
+      a.href=blobUrl; a.download=filename; a.rel='noopener'; a.style.display='none';
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){ if(a.parentNode) a.parentNode.removeChild(a); }, 4000);
+    }
+
+    // Abre a imagem em nova aba para "segurar e salvar" (fallback iOS).
+    function openImageForSave(blobUrl){
+      var w=window.open('', '_blank');
+      if(w && w.document){
+        w.document.write(
+          '<html><head><meta name="viewport" content="width=device-width, initial-scale=1">'+
+          '<title>Seu card #EuVou</title></head>'+
+          '<body style="margin:0;background:#0a0e1a;color:#fff;font-family:Arial,sans-serif;text-align:center;">'+
+          '<p style="padding:14px;font-size:15px;">📱 Segure a imagem e toque em <b>“Adicionar às Fotos”</b> / <b>“Salvar imagem”</b>.</p>'+
+          '<img src="'+blobUrl+'" style="width:100%;max-width:800px;height:auto;">'+
+          '</body></html>');
+        w.document.close();
+      } else {
+        location.href=blobUrl; // pop-up bloqueado
+      }
+    }
+
+    // Entrega SÍNCRONA usando um File já pronto (preserva a ativação de toque no iOS).
+    function deliverReady(){
+      var filename=fileNameFor();
+      // Caminho nativo: compartilhar arquivo (abre "Salvar em Fotos" no iOS).
+      if(navigator.canShare && readyFile && navigator.canShare({files:[readyFile]})){
+        navigator.share({files:[readyFile], title:'Card #EuVou', text:'#EuVou #GoldenJackets'})
+          .catch(function(){ /* usuário cancelou: não faz nada */ });
+        return;
+      }
+      // Sem share: iOS → abre imagem p/ salvar; demais → download direto.
+      if(isIOS) openImageForSave(readyBlobUrl);
+      else anchorDownload(readyBlobUrl, filename);
+    }
+
+    // Re-renderiza sempre que o conteúdo muda.
+    inName.addEventListener('input', schedulePrerender);
+    inRole.addEventListener('input', schedulePrerender);
+    inCat.addEventListener('change', schedulePrerender);
+    // (a foto dispara no handler existente do inPhoto, abaixo do reader)
+
     document.getElementById('btnDownload').addEventListener('click', function(){
-      var btn=this; btn.textContent='⏳ Gerando...';
-      var card=document.getElementById('card');
-      var prev=card.style.transform; card.style.transform='none';
-      html2canvas(card, {backgroundColor:'#0a0e1a', width:800, height:1000, scale:2, useCORS:true}).then(function(canvas){
-        card.style.transform=prev;
-        var link=document.createElement('a');
-        var nm=(inName.value||'golden-jacket').toLowerCase().replace(/[^a-z0-9]+/g,'-');
-        link.download='card-euvou-'+nm+'.png';
-        link.href=canvas.toDataURL('image/png');
-        link.click();
-        btn.textContent='📥 Baixar meu card';
-      }).catch(function(err){ card.style.transform=prev; btn.textContent='📥 Baixar meu card'; alert('Erro ao gerar: '+err); });
+      var btn=this;
+      // Se já temos o card pronto, entrega imediata (síncrona) — funciona no iOS.
+      if(readyFile){ deliverReady(); return; }
+
+      // Ainda não renderizou: renderiza agora. No iOS isso perde a ativação de
+      // toque, então após render abrimos a imagem (fallback confiável).
+      btn.textContent='⏳ Gerando...'; btn.disabled=true;
+      renderCard().then(function(blob){
+        if(readyBlobUrl) URL.revokeObjectURL(readyBlobUrl);
+        readyFile=new File([blob], fileNameFor(), {type:'image/png'});
+        readyBlobUrl=URL.createObjectURL(blob);
+        btn.textContent='📥 Baixar meu card'; btn.disabled=false;
+        if(isIOS) openImageForSave(readyBlobUrl);        // caminho seguro no iOS
+        else deliverReady();
+      }).catch(function(err){
+        btn.textContent='📥 Baixar meu card'; btn.disabled=false;
+        alert('Erro ao gerar: '+err);
+      });
     });
+
+    // Prepara o primeiro render ao carregar (deixa pronto p/ o primeiro clique).
+    window.addEventListener('load', schedulePrerender);
   </script>
 </body>
 </html>
