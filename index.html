@@ -156,6 +156,8 @@
     #brazil-map path { fill: var(--map-fill); stroke: var(--map-stroke); stroke-width: 0.8; transition: fill 0.3s, stroke 0.3s; }
     #brazil-map path.active { fill: var(--map-active); }
     #brazil-map path.active:hover { fill: var(--gold); cursor: pointer; }
+    #brazil-map path.active-silver { fill: #C0C0C0; }
+    #brazil-map path.active-silver:hover { fill: #e0e0e0; cursor: pointer; }
     #brazil-map text { pointer-events: none; }
     #brazil-map .circle { display: none; }
     .map-pin { position: absolute; transform: translate(-50%,-100%); cursor: pointer; transition: transform 0.2s; text-align: center; }
@@ -2109,11 +2111,11 @@
           <a href="https://www.linkedin.com/in/philemon-delva/" target="_blank">in</a>
         </div>
       </div>
-      <div class="member-card challenger" data-state="SP">
+      <div class="member-card challenger" data-state="MA">
         <span class="card-number">#17</span>
         <img src="assets/members/leonardo-ribeiro-machado.jpg" alt="Leonardo Ribeiro Machado" class="photo">
         <h3>Leonardo Ribeiro Machado</h3>
-        <div class="location">Cedral, Brazil</div>
+        <div class="location">Cedral, MA, Brazil</div>
         <div class="tags">
           <span class="tag">10/12 Certifications</span>
           <span class="tag">Challenger</span>
@@ -3229,6 +3231,17 @@ setInterval(updateCountdowns, 1000);
       var silverParent = silverEl ? silverEl.parentElement : null;
       if (silverParent) silverParent.style.display = silverCounts[state] ? '' : 'none';
     }
+  });
+
+  // Light up map states: gold if has Golden Jacket, silver if only Challenger/Rising
+  var goldStates = {};
+  document.querySelectorAll('#members .member-card[data-state]').forEach(function(c){ if(c.dataset.state) goldStates[c.dataset.state]=true; });
+  var silverStates = {};
+  document.querySelectorAll('#challengers .member-card[data-state], #rising .member-card[data-state]').forEach(function(c){ var s=c.dataset.state; if(s && !goldStates[s]) silverStates[s]=true; });
+  document.querySelectorAll('#brazil-map path[data-state]').forEach(function(p){
+    var s = p.dataset.state;
+    if (goldStates[s]) { p.classList.add('active'); p.classList.remove('active-silver'); }
+    else if (silverStates[s]) { p.classList.add('active-silver'); p.classList.remove('active'); }
   });
 })();
 </script>
