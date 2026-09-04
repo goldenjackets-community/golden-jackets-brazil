@@ -158,6 +158,8 @@
     #brazil-map path.active:hover { fill: var(--gold); cursor: pointer; }
     #brazil-map path.active-silver { fill: #C0C0C0; }
     #brazil-map path.active-silver:hover { fill: #e0e0e0; cursor: pointer; }
+    #brazil-map path.active-bronze { fill: #CD7F32; }
+    #brazil-map path.active-bronze:hover { fill: #e0955a; cursor: pointer; }
     #brazil-map text { pointer-events: none; }
     #brazil-map .circle { display: none; }
     .map-pin { position: absolute; transform: translate(-50%,-100%); cursor: pointer; transition: transform 0.2s; text-align: center; }
@@ -3233,15 +3235,17 @@ setInterval(updateCountdowns, 1000);
     }
   });
 
-  // Light up map states: gold if has Golden Jacket, silver if only Challenger/Rising
-  var goldStates = {};
+  // Light up map states by highest category present: gold (Golden) > silver (Challenger) > bronze (Rising)
+  var goldStates = {}, challengerStates = {}, risingStates = {};
   document.querySelectorAll('#members .member-card[data-state]').forEach(function(c){ if(c.dataset.state) goldStates[c.dataset.state]=true; });
-  var silverStates = {};
-  document.querySelectorAll('#challengers .member-card[data-state], #rising .member-card[data-state]').forEach(function(c){ var s=c.dataset.state; if(s && !goldStates[s]) silverStates[s]=true; });
+  document.querySelectorAll('#challengers .member-card[data-state]').forEach(function(c){ if(c.dataset.state) challengerStates[c.dataset.state]=true; });
+  document.querySelectorAll('#rising .member-card[data-state]').forEach(function(c){ if(c.dataset.state) risingStates[c.dataset.state]=true; });
   document.querySelectorAll('#brazil-map path[data-state]').forEach(function(p){
     var s = p.dataset.state;
-    if (goldStates[s]) { p.classList.add('active'); p.classList.remove('active-silver'); }
-    else if (silverStates[s]) { p.classList.add('active-silver'); p.classList.remove('active'); }
+    p.classList.remove('active','active-silver','active-bronze');
+    if (goldStates[s]) p.classList.add('active');
+    else if (challengerStates[s]) p.classList.add('active-silver');
+    else if (risingStates[s]) p.classList.add('active-bronze');
   });
 })();
 </script>
