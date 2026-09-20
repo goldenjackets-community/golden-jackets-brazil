@@ -143,6 +143,11 @@
         <div class="label">Promote</div>
         <div class="desc">Challenger → Golden Jacket</div>
       </div>
+      <div class="tool-btn" id="btnLiveToggle" onclick="toggleLive()" style="border:1px solid #e00;">
+        <div class="icon" id="liveIcon">🔴</div>
+        <div class="label" id="liveLabel">AO VIVO: —</div>
+        <div class="desc">Liga/desliga a faixa AO VIVO no site</div>
+      </div>
       <div class="tool-btn" onclick="window.open('/assets/co-founder-guide.pdf')">
         <div class="icon">📖</div>
         <div class="label">Operations Guide</div>
@@ -477,6 +482,52 @@ async function promoteChallenger() {
 
 // Load partner click stats
 var partnerData = {};
+
+// --- AO VIVO banner toggle ---
+async function loadLiveStatus() {
+  try {
+    var data = await adminCall('live-status', {});
+    if (data && typeof data.on !== 'undefined') { setLiveBtn(data.on); }
+  } catch(e) {}
+}
+function setLiveBtn(on) {
+  var btn = document.getElementById('btnLiveToggle');
+  var icon = document.getElementById('liveIcon');
+  var label = document.getElementById('liveLabel');
+  if (!btn) return;
+  if (on) {
+    btn.style.borderColor = '#e00';
+    btn.style.background = 'rgba(238,0,0,0.12)';
+    icon.textContent = '\uD83D\uDD34';
+    label.textContent = 'AO VIVO: LIGADO';
+  } else {
+    btn.style.borderColor = '#2a2a45';
+    btn.style.background = '';
+    icon.textContent = '\u26AA';
+    label.textContent = 'AO VIVO: desligado';
+  }
+  btn.dataset.on = on ? '1' : '0';
+}
+async function toggleLive() {
+  var btn = document.getElementById('btnLiveToggle');
+  var currentlyOn = btn && btn.dataset.on === '1';
+  var turnOn = !currentlyOn;
+  var msg = turnOn
+    ? 'Ligar a faixa AO VIVO no site? Ela vai aparecer pra todo mundo em ~1 minuto.'
+    : 'Desligar a faixa AO VIVO? Ela some do site em ~1 minuto.';
+  if (!confirm(msg)) return;
+  var data = await adminCall('toggle-live', {on: turnOn});
+  if (data && typeof data.on !== 'undefined') {
+    setLiveBtn(data.on);
+    var out = document.getElementById('adminOutput');
+    if (out) { out.style.display='block'; out.innerHTML = '<span style="color:#FFD700;">' + (data.message||'OK') + '</span>'; }
+  } else if (data && data.error) {
+    alert('Erro: ' + data.error);
+  }
+}
+// carrega o estado atual quando o admin abre
+document.addEventListener('DOMContentLoaded', function(){ setTimeout(loadLiveStatus, 800); });
+
 function loadPartnerStats(){
   var month = document.getElementById('monthFilter').value || '';
   var url = 'https://97i05orlfa.execute-api.us-east-1.amazonaws.com/clicks';
