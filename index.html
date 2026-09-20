@@ -374,6 +374,23 @@
   </style>
 </head>
 <body>
+<!-- ===== GJ LIVE BAR (faixa AO VIVO — controle manual: mude LIVE_ON no script no fim da pagina) ===== -->
+<div id="gj-live-bar">
+  <span class="gj-live-dot"></span>
+  <span class="gj-live-txt">🔴 <b>AO VIVO AGORA</b> — Assista no YouTube</span>
+  <a class="gj-live-watch" href="https://www.youtube.com/@GoldenJacketsBrazil/live" target="_blank" rel="noopener">Assistir ▶</a>
+</div>
+<style>
+  #gj-live-bar{display:none;background:linear-gradient(90deg,#B8860B,#151528 60%);border-bottom:2px solid #FFD700;padding:10px 20px;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;position:sticky;top:0;z-index:99999;font-family:'Inter',sans-serif;}
+  #gj-live-bar.gj-show{display:flex;}
+  #gj-live-bar .gj-live-dot{width:12px;height:12px;border-radius:50%;background:#e00;animation:gjpulse 1.3s infinite;flex:0 0 auto;}
+  @keyframes gjpulse{0%{box-shadow:0 0 0 0 rgba(238,0,0,.6);}70%{box-shadow:0 0 0 10px rgba(238,0,0,0);}100%{box-shadow:0 0 0 0 rgba(238,0,0,0);}}
+  #gj-live-bar .gj-live-txt{font-weight:800;color:#fff;letter-spacing:.5px;font-size:1em;}
+  #gj-live-bar .gj-live-txt b{color:#FFD700;}
+  #gj-live-bar .gj-live-watch{background:#FFD700;color:#151528;text-decoration:none;font-weight:800;padding:7px 20px;border-radius:20px;font-size:.9em;transition:transform .2s;}
+  #gj-live-bar .gj-live-watch:hover{transform:scale(1.05);}
+</style>
+<!-- ===== FIM GJ LIVE BAR ===== -->
 
   <nav>
     <div class="logo">GJ <span>Brazil</span> <a href="https://open.spotify.com/episode/4JcjaBZb6uuLQnAyGw0PJF?si=cdaT07OLQk6blhB20x83yg" target="_blank" style="margin-left:8px;opacity:0.7;transition:opacity 0.3s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7"><svg width="16" height="16" viewBox="0 0 24 24" fill="#1DB954"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.5 17.3c-.2.3-.6.4-1 .2-2.7-1.6-6-2-10-1.1-.4.1-.7-.2-.8-.5-.1-.4.2-.7.5-.8 4.3-1 8.1-.6 11.1 1.2.3.2.4.6.2 1zm1.5-3.3c-.3.4-.8.5-1.2.3-3-1.9-7.7-2.4-11.3-1.3-.4.1-.9-.1-1-.6-.1-.4.1-.9.6-1 4.1-1.3 9.2-.7 12.6 1.5.3.2.5.7.3 1.1zm.1-3.4c-3.7-2.2-9.7-2.4-13.2-1.3-.5.2-1.1-.1-1.2-.6-.2-.5.1-1.1.6-1.2 4-1.2 10.6-1 14.8 1.5.5.3.6.9.4 1.4-.3.4-.9.6-1.4.2z"/></svg></a> <a href="https://www.youtube.com/@GoldenJacketsBrazil" target="_blank" style="margin-left:8px;opacity:0.7;transition:opacity 0.3s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7"><svg width="20" height="14" viewBox="0 0 20 14"><rect width="20" height="14" rx="3" fill="#C0C0C0"/><polygon points="8,3 8,11 14,7" fill="#FF0000"/></svg></a></div>
@@ -3413,6 +3430,15 @@ setInterval(updateCountdowns, 1000);
 })();
 </script>
 <script>window.addEventListener("scroll",function(){document.querySelector(".mobile-menu").classList.remove("open")});</script>
+<script>
+/* ===== GJ LIVE BAR — CONTROLE MANUAL =====
+   Para ATIVAR a faixa quando entrar ao vivo: troque LIVE_ON para true e faca deploy.
+   Para DESATIVAR quando terminar: troque LIVE_ON para false e faca deploy. */
+var LIVE_ON = false;
+(function(){
+  if(LIVE_ON){ var b=document.getElementById('gj-live-bar'); if(b) b.classList.add('gj-show'); }
+})();
+</script>
 </body>
 <!-- v1.1 -->
 </html>
