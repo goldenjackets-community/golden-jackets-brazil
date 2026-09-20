@@ -3274,14 +3274,15 @@ if (localStorage.getItem('theme') === 'light') {
 function updateCountdowns() {
   var now = new Date();
   var events = [
-    {id: 'countdown-gjdinner', date: new Date('2026-09-02T08:00:00-03:00')},
-    {id: 'countdown-summit', date: new Date('2026-09-02T08:00:00-03:00')},
-    {id: 'countdown-reinvent', date: new Date('2026-11-30T08:00:00-08:00')}
+    {id: 'countdown-gjdinner', date: new Date('2026-09-02T08:00:00-03:00'), end: new Date('2026-09-03T02:00:00-03:00')},
+    {id: 'countdown-summit', date: new Date('2026-09-02T08:00:00-03:00'), end: new Date('2026-09-04T02:00:00-03:00')},
+    {id: 'countdown-reinvent', date: new Date('2026-11-30T08:00:00-08:00'), end: new Date('2026-12-05T02:00:00-08:00')}
   ];
   events.forEach(function(e) {
     var el = document.getElementById(e.id);
     if (!el) return;
     var diff = e.date - now;
+    if (e.end && (now - e.end) >= 0) { el.textContent = '✅ Event ended'; el.style.background = 'rgba(120,120,120,0.15)'; el.style.borderColor = 'rgba(120,120,120,0.3)'; el.style.color = '#aaa'; return; }
     if (diff <= 0) { el.textContent = '🔴 Happening now!'; return; }
     var days = Math.floor(diff / 86400000);
     var hours = Math.floor((diff % 86400000) / 3600000);
